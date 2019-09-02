@@ -1,0 +1,34 @@
+plugins {
+    id 'com.voc.base-gradle-plugin' version '1.0.0-RELEASE'
+}
+
+group 'com.voc'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+//    mavenCentral()
+}
+
+dependencies {
+    compileOnly group: 'org.freemarker', name: 'freemarker', version: '2.3.28'
+    compileOnly group: 'com.ibeetl', name: 'beetl', version: '2.9.8'
+    compileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.1.8.RELEASE'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    implementation group: 'org.dom4j', name: 'dom4j', version: '2.1.1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+devtool {
+    /* 本地 Maven 仓库路径 */
+//    localMavenRepository = 'D:\\SoftWare\\Maven\\repository'
+    /* Google 注解处理器 */
+    googleAutoService = true
+    /* 使用 Kotlin，默认 false */
+    usingKotlin = true
+    /* 使用 java tools ,默认 false */
+    javaTools = true
+}

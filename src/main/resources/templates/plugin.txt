@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <id>${plugin.id!}</id>
+    <name><![CDATA[${plugin.name!}]]></name>
+    <active>${plugin.active!false?'yes':'no'}</active>
+    <version>${plugin.version!}</version>
+    <env-version>${plugin.envVersion!}</env-version>
+    <vendor>${plugin.vendor!}</vendor>
+    <jartime>${plugin.jarTime!}</jartime>
+    <% if (plugin.price!0 > 0) { %>
+    <price>${plugin.price!}</price>
+    <% } %>
+    <description><![CDATA[${plugin.description!}]]></description>
+    <change-notes>
+        <![CDATA[
+        <% for(change in plugin.changeNotes!){ %>
+            <p>[${change.dateOf!}] ${change.content!}</p>
+        <% } %>
+        ]]>
+    </change-notes>
+    <% if (isNotEmpty(plugin.mainPackage!)) { %>
+    <main-package>${plugin.mainPackage!}</main-package>
+    <% } %>
+    <% if (isNotEmpty(plugin.functionRecorder!)) { %>
+    <function-recorder class="${plugin.functionRecorder!}"/>
+    <% } %>
+    <% for(entry in interface!){ var key = entry.key; var value = entry.value;%>
+    <% if (isNotEmpty(value)) { %>
+    <${key}>
+        <% for(info in value!){ var className = type.name(info);%>
+        <% if ("ClassInfo" == className) { %>
+        <${info.interfaceTagName!} class="${info.classCanonicalName!}"/>
+        <% } else if ("FunctionClassInfo" == className) { %>
+        <${info.interfaceTagName!} class="${info.classCanonicalName!}" name="${info.name!}" description="${info.description!}"/>
+        <% } %>
+        <% } %>
+    </${key}>
+    <% } %>
+    <% } %>
+</plugin>
