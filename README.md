@@ -12,21 +12,23 @@ pluginFineVersion
 3. 使用@EnabledSupportedAnnotation注解，启用处理逻辑，否则注解处理器不会处理相关标记
 4. 注解具体内容依据接口进行定义
 
+```java
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.TYPE})
+@Module(FineModule.CORE)
+@EnabledSupportedAnnotation
+public @interface LocaleFinder {
   
-      @Retention(RetentionPolicy.SOURCE)
-      @Target({ElementType.TYPE})
-      @Module(FineModule.CORE)
-      @EnabledSupportedAnnotation
-      public @interface LocaleFinder {
+      /**
+       * 国际化实现类
+       *
+       * @return Class<?>[]
+       */
+      Class<?>[] value() default {};
+  
+}
+```
       
-          /**
-           * 国际化实现类
-           *
-           * @return Class<?>[]
-           */
-          Class<?>[] value() default {};
-      
-      }
       
 ### 注解处理逻辑实现
 

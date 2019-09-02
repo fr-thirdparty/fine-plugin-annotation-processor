@@ -25,6 +25,6 @@ public @interface JavaScriptFileHandler {
      *
      * @return Class<?>[]
      */
-    Class<?>[] value() default Void.class;
+    Class<?>[] value() default {};
 
 }

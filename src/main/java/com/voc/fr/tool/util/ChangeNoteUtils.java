@@ -38,7 +38,7 @@ public class ChangeNoteUtils {
                 }
             }
             log.debug("日期：{} | 版本：{} | 更新日志：{}", dateOf, version, sb.toString());
-            pluginXmlContext.getPluginBaseInfo().getChangeNotes().add(new DefaultNote(dateOf, version, sb.toString()));
+            pluginXmlContext.getPluginBaseInfo().addChangeNote(new DefaultNote(dateOf, version, sb.toString()));
         }
     }
 

@@ -17,12 +17,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getId();
 
-//    /**
-//     * 设置插件 ID
-//     *
-//     * @param id String
-//     */
-//    void setId(String id);
+    /**
+     * 设置插件 ID
+     *
+     * @param id String
+     */
+    void setId(String id);
 
     /**
      * 获取插件的名字
@@ -31,12 +31,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getName();
 
-//    /**
-//     * 设置插件名称
-//     *
-//     * @param name String
-//     */
-//    void setName(String name);
+    /**
+     * 设置插件名称
+     *
+     * @param name String
+     */
+    void setName(String name);
 
     /**
      * 插件是否在插件管理器中隐藏
@@ -45,12 +45,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     boolean isHidden();
 
-//    /**
-//     * 设置是否隐藏插件
-//     *
-//     * @param hidden boolean
-//     */
-//    void setHidden(boolean hidden);
+    /**
+     * 设置是否隐藏插件
+     *
+     * @param hidden boolean
+     */
+    void setHidden(boolean hidden);
 
     /**
      * 插件是否启用
@@ -59,12 +59,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     boolean isActive();
 
-//    /**
-//     * 设置是否激活插件
-//     *
-//     * @param active boolean
-//     */
-//    void setActive(boolean active);
+    /**
+     * 设置是否激活插件
+     *
+     * @param active boolean
+     */
+    void setActive(boolean active);
 
     /**
      * 插件售价
@@ -73,12 +73,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     Integer getPrice();
 
-//    /**
-//     * 设置插件售价
-//     *
-//     * @param price Integer
-//     */
-//    void setPrice(Integer price);
+    /**
+     * 设置插件售价
+     *
+     * @param price Integer
+     */
+    void setPrice(Integer price);
 
     /**
      * 插件版本
@@ -86,13 +86,13 @@ public interface IPluginBaseInfo extends Serializable {
      * @return String
      */
     String getVersion();
-//
-//    /**
-//     * 设置插件版本
-//     *
-//     * @param version String
-//     */
-//    void setVersion(String version);
+
+    /**
+     * 设置插件版本
+     *
+     * @param version String
+     */
+    void setVersion(String version);
 
     /**
      * 插件针对的报表版本，一般来说，需要保持向后兼容
@@ -101,12 +101,27 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getEnvVersion();
 
-//    /**
-//     * 设置环境版本
-//     *
-//     * @param envVersions String
-//     */
-//    void setEnvVersion(String envVersions);
+    /**
+     * 设置环境版本
+     *
+     * @param envVersions String
+     */
+    void setEnvVersion(String envVersions);
+
+    /**
+     * 插件适配的移动端版本,仅移动端插件需要该属性
+     *
+     * @return String
+     * @since 10.0
+     */
+    String getAppVersion();
+
+    /**
+     * 设置插件适配的移动端版本
+     *
+     * @param appVersion String
+     */
+    void setAppVersion(String appVersion);
 
     /**
      * 插件开发者
@@ -115,12 +130,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getVendor();
 
-//    /**
-//     * 设置插件开发者
-//     *
-//     * @param vendor String
-//     */
-//    void setVendor(String vendor);
+    /**
+     * 设置插件开发者
+     *
+     * @param vendor String
+     */
+    void setVendor(String vendor);
 
     /**
      * 插件适配的jar版本
@@ -129,12 +144,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getJarTime();
 
-//    /**
-//     * 设置 JAR 包时间
-//     *
-//     * @param jarTime String
-//     */
-//    void setJarTime(String jarTime);
+    /**
+     * 设置 JAR 包时间
+     *
+     * @param jarTime String
+     */
+    void setJarTime(String jarTime);
 
     /**
      * 插件的简要描述信息
@@ -143,12 +158,12 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getDescription();
 
-//    /**
-//     * 设置插件描述
-//     *
-//     * @param description String
-//     */
-//    void setDescription(String description);
+    /**
+     * 设置插件描述
+     *
+     * @param description String
+     */
+    void setDescription(String description);
 
     /**
      * 插件更新日志
@@ -157,15 +172,16 @@ public interface IPluginBaseInfo extends Serializable {
      */
     Set<INote> getChangeNotes();
 
-//    /**
-//     * 设置插件更新日志
-//     *
-//     * @param changeNotes Set<INote>
-//     */
-//    void setChangeNotes(Set<INote> changeNotes);
+    /**
+     * 设置插件更新日志
+     *
+     * @param changeNotes Set<INote>
+     */
+    void setChangeNotes(Set<INote> changeNotes);
 
     /**
      * 添加更新日志
+     *
      * @param note INote
      */
     void addChangeNote(INote note);
@@ -178,14 +194,14 @@ public interface IPluginBaseInfo extends Serializable {
      */
     String getMainPackage();
 
-//    /**
-//     * 插件适配的移动端版本,仅移动端插件需要该属性
-//     *
-//     * @return String
-//     * @since 10.0
-//     */
-//    String getAppVersion();
-//
+    /**
+     * 设置主包
+     *
+     * @param mainPackage String
+     */
+    void setMainPackage(String mainPackage);
+
+
 //    Object getLifecycleMonitor();
 //
 //    Object getPreferPackages();

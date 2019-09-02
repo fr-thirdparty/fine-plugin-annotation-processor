@@ -5,6 +5,7 @@ import com.voc.fr.tool.api.IPluginBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -115,6 +116,9 @@ public class PluginBaseInfo implements IPluginBaseInfo {
 
     @Override
     public void addChangeNote(INote note) {
+        if (this.changeNotes == null) {
+            this.changeNotes = new TreeSet<>();
+        }
         this.changeNotes.add(note);
     }
 

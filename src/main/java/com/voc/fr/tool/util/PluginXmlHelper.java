@@ -11,7 +11,6 @@ import org.springframework.core.OrderComparator;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.annotation.ElementType;
 import java.util.*;
 
 /**
@@ -49,10 +48,6 @@ public class PluginXmlHelper {
         return document;
     }
 
-    private static void addTextElement(Element rootElement, String name, String value) {
-        addElement(rootElement, ElementType.TEXT, name, value);
-    }
-
     private static void addElement(Element element, ElementType type, String name, String value) {
         if (value != null) {
             if (ElementType.TEXT.equals(type)) {
@@ -62,7 +57,6 @@ public class PluginXmlHelper {
             }
         }
     }
-
 
     private static void addBaseInfo(Element parentElement, IPluginBaseInfo pluginBaseInfo) {
         if (pluginBaseInfo != null) {
@@ -74,6 +68,7 @@ public class PluginXmlHelper {
             }
             addElement(parentElement, ElementType.TEXT, "version", pluginBaseInfo.getVersion());
             addElement(parentElement, ElementType.TEXT, "env-version", pluginBaseInfo.getEnvVersion());
+            addElement(parentElement, ElementType.TEXT, "app-version", pluginBaseInfo.getAppVersion());
             addElement(parentElement, ElementType.TEXT, "vendor", pluginBaseInfo.getVendor());
             if (StringUtils.isNotEmpty(pluginBaseInfo.getMainPackage())) {
                 addElement(parentElement, ElementType.TEXT, "main-package", pluginBaseInfo.getMainPackage());
