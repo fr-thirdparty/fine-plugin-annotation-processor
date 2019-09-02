@@ -73,7 +73,7 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
         if (log.isInfoEnabled()) {
             log.info("插件版本号：{} , 插件描述文件目录：{}", pluginVersion, pluginXmlDir);
         }
-        this.intiClassLoader();
+        this.initClassLoader();
         applicationContext = new AnnotationConfigApplicationContext(Config.class);
         this.pluginXmlContext = applicationContext.getBean(IPluginXmlContext.class);
 
@@ -115,7 +115,7 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void intiClassLoader() {
+    private void initClassLoader() {
         originClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader classLoader = this.getClass().getClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
