@@ -1,0 +1,8 @@
+pluginManagement {
+    repositories {
+        maven { url "D:/Project/mydev/fine-gradle-plugin/build/repos/snapshots" }
+        maven { url "D:/Project/mydev/fine-gradle-plugin/build/repos/releases" }
+        gradlePluginPortal()
+    }
+}
+
