@@ -1,5 +1,5 @@
 plugins {
-    id 'com.voc.base-gradle-plugin' version '1.0.0-RELEASE'
+    id 'com.voc.base' version '0.0.17'
 }
 
 group 'com.voc'
