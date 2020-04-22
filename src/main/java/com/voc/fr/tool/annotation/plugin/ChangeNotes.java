@@ -8,8 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created with IntelliJ IDEA.
- *
  * @author Wu Yujie
  * @email coffee377@dingtalk.com
  * @time 2019/03/14 16:16

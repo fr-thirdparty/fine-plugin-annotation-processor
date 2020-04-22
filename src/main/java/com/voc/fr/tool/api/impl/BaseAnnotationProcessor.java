@@ -30,7 +30,7 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
     /**
      * 注解处理器日志记录器
      */
-    protected final static Logger logger = LoggerFactory.getLogger("PluginXmlProcessor");
+    public final static Logger logger = LoggerFactory.getLogger("PluginXmlProcessor");
 
     @Override
     public void setContext(IPluginXmlContext pluginXmlContext) {
@@ -63,7 +63,7 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
                 logger.info("@{}", annotation.getSimpleName());
             }
             if (logger.isDebugEnabled()) {
-                logger.debug("Annotation：[{}] {}", annotation.getSimpleName(), annotation.getQualifiedName());
+                logger.debug("Annotation：{}", annotation.getQualifiedName());
             }
             for (Element element : env.getElementsAnnotatedWith(annotation)) {
                 process(pluginXmlContext, element, annotation, processingEnv);

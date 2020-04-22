@@ -6,7 +6,6 @@ import java.lang.annotation.*;
 
 /**
  * 更新日志标签
- * Created with IntelliJ IDEA.
  *
  * @author Wu Yujie
  * @email coffee377@dingtalk.com
@@ -26,11 +25,11 @@ public @interface ChangeNote {
     String dateOf() default "";
 
     /**
-     * 版本
+     * 日期格式
      *
-     * @return 版本号
+     * @return 日期格式字符串
      */
-    String version() default "";
+    String format() default "yyyy-MM-dd";
 
     /**
      * 改动内容

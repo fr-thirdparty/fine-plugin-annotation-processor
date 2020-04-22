@@ -15,11 +15,11 @@ public interface INote extends Comparable<INote> {
     String getDateOf();
 
     /**
-     * 版本
+     * 日期格式
      *
      * @return String
      */
-    String getVersion();
+    String getFormat();
 
     /**
      * 内容
