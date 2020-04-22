@@ -20,6 +20,8 @@ import java.util.*;
  */
 public class PluginXmlHelper {
 
+    public static final String MAIN_PACKAGE = "com.fr.plugin";
+
     /**
      * 写出文件
      *
@@ -49,7 +51,7 @@ public class PluginXmlHelper {
     }
 
     private static void addElement(Element element, ElementType type, String name, String value) {
-        if (value != null) {
+        if (StringUtils.isNotEmpty(value)) {
             if (ElementType.TEXT.equals(type)) {
                 element.addElement(name).addText(value);
             } else if (ElementType.CDATA.equals(type)) {
@@ -58,31 +60,37 @@ public class PluginXmlHelper {
         }
     }
 
-    private static void addBaseInfo(Element parentElement, IPluginBaseInfo pluginBaseInfo) {
-        if (pluginBaseInfo != null) {
-            addElement(parentElement, ElementType.TEXT, "id", pluginBaseInfo.getId());
-            addElement(parentElement, ElementType.CDATA, "name", pluginBaseInfo.getName());
-            addElement(parentElement, ElementType.TEXT, "active", pluginBaseInfo.isActive() ? "yes" : "no");
-            if (pluginBaseInfo.isHidden()) {
-                addElement(parentElement, ElementType.TEXT, "hidden", "yes");
-            }
-            addElement(parentElement, ElementType.TEXT, "version", pluginBaseInfo.getVersion());
-            addElement(parentElement, ElementType.TEXT, "env-version", pluginBaseInfo.getEnvVersion());
-            addElement(parentElement, ElementType.TEXT, "app-version", pluginBaseInfo.getAppVersion());
-            addElement(parentElement, ElementType.TEXT, "vendor", pluginBaseInfo.getVendor());
-            if (StringUtils.isNotEmpty(pluginBaseInfo.getMainPackage())) {
-                addElement(parentElement, ElementType.TEXT, "main-package", pluginBaseInfo.getMainPackage());
-            }
-            addElement(parentElement, ElementType.TEXT, "jartime", pluginBaseInfo.getJarTime());
-            if (pluginBaseInfo.getPrice() > 0) {
-                addElement(parentElement, ElementType.TEXT, "price", String.valueOf(pluginBaseInfo.getPrice()));
-            }
-            addElement(parentElement, ElementType.CDATA, "description", pluginBaseInfo.getDescription());
-            addChangeNotes(parentElement, pluginBaseInfo.getChangeNotes());
+    private static void addBaseInfo(Element parentElement, IPluginBaseInfo pluginInfo) {
+        if (pluginInfo == null) {
+            return;
         }
+        addElement(parentElement, ElementType.TEXT, "id", pluginInfo.getId());
+        if (StringUtils.isNotEmpty(pluginInfo.getMainPackage()) && !MAIN_PACKAGE.equals(pluginInfo.getMainPackage())) {
+            addElement(parentElement, ElementType.TEXT, "main-package", pluginInfo.getMainPackage());
+        }
+        addElement(parentElement, ElementType.CDATA, "name", pluginInfo.getName());
+        if (pluginInfo.isActive()) {
+            addElement(parentElement, ElementType.TEXT, "active", "yes");
+        }
+        if (pluginInfo.isHidden()) {
+            addElement(parentElement, ElementType.TEXT, "hidden", "yes");
+        }
+        if (pluginInfo.getPrice() > 0) {
+            addElement(parentElement, ElementType.TEXT, "price", String.valueOf(pluginInfo.getPrice()));
+        }
+        addElement(parentElement, ElementType.TEXT, "version", pluginInfo.getVersion());
+        addElement(parentElement, ElementType.TEXT, "env-version", pluginInfo.getEnvVersion());
+        addElement(parentElement, ElementType.TEXT, "app-version", pluginInfo.getAppVersion());
+        addElement(parentElement, ElementType.TEXT, "jartime", pluginInfo.getJarTime());
+        addElement(parentElement, ElementType.TEXT, "vendor", pluginInfo.getVendor());
+        addElement(parentElement, ElementType.CDATA, "description", pluginInfo.getDescription());
+        addChangeNotes(parentElement, pluginInfo.getChangeNotes());
     }
 
     private static void addChangeNotes(Element parentElement, Set<INote> changeNotes) {
+        if (changeNotes == null || changeNotes.size() == 0) {
+            return;
+        }
         List<INote> notes = new ArrayList<>(changeNotes);
         StringBuilder sb = new StringBuilder();
         if (notes.size() > 1) {

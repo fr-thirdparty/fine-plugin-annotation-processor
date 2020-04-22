@@ -1,11 +1,6 @@
 package com.voc.fr.tool.api;
 
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Wu Yujie
@@ -41,7 +36,7 @@ public enum FineModule {
         this.name = name;
     }
 
-    private String name;
+    private final String name;
 
 
 }

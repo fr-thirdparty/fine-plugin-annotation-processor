@@ -69,8 +69,17 @@ public interface IAnnotationProcessor extends Ordered {
      * @param typeElement     接口注解
      * @param annotationClass 注解类
      * @return 标签名称
+     * @deprecated
      */
     String getXmlTag(Element element, TypeElement typeElement, Class<? extends Annotation> annotationClass);
+
+    /**
+     * 获取插件接口标签
+     *
+     * @param typeElement 接口注解
+     * @return 标签名称
+     */
+    String getXmlTag(TypeElement typeElement);
 
     /**
      * 获取元素上注解的值

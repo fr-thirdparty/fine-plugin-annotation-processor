@@ -5,8 +5,6 @@ import com.voc.fr.tool.api.IPluginBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,9 +23,9 @@ public class PluginBaseInfo implements IPluginBaseInfo {
     private String id;
 
     /**
-     * 主包名，需要涵盖所有在xml中描述的类，默认 com.fr.plugin
+     * 主包名，需要涵盖所有在xml中描述的类，默认 com.voc.fr.plugin
      */
-    private String mainPackage;
+    private String mainPackage = "com.voc.fr.plugin";
 
     /**
      * 插件的名字
@@ -45,6 +43,11 @@ public class PluginBaseInfo implements IPluginBaseInfo {
     private boolean hidden;
 
     /**
+     * 插件售价
+     */
+    private int price;
+
+    /**
      * 插件版本
      */
     private String version;
@@ -52,7 +55,7 @@ public class PluginBaseInfo implements IPluginBaseInfo {
     /**
      * 插件针对的报表版本，一般来说，需要保持向后兼容
      */
-    private String envVersion;
+    private String envVersion = "10.0";
 
     /**
      * 插件适配的移动端版本
@@ -79,40 +82,6 @@ public class PluginBaseInfo implements IPluginBaseInfo {
      */
     private Set<INote> changeNotes;
 
-    /**
-     * 添加了功能点记录的类
-     */
-    private List<String> functionRecorder;
-
-    /**
-     * 插件生命周期类接入点
-     */
-    private Object lifecycleMonitor;
-
-    /**
-     * 插件优先依赖目录,用于解决插件依赖jar和主工程中jar冲突问题
-     */
-    private Object preferPackages;
-
-    /**
-     * 插件依赖信息接入点
-     */
-    private Object dependence;
-
-    /**
-     * 插件自定义属性
-     */
-    private Object attributes;
-
-    /**
-     * 插件安装后会执行的一些文件移动操作
-     */
-    private Object moveAfterInstall;
-
-    /**
-     * 插件售价
-     */
-    private Integer price;
 
     @Override
     public void addChangeNote(INote note) {
@@ -120,13 +89,6 @@ public class PluginBaseInfo implements IPluginBaseInfo {
             this.changeNotes = new TreeSet<>();
         }
         this.changeNotes.add(note);
-    }
-
-    public PluginBaseInfo() {
-        this.active = true;
-        this.version = "0.0.1";
-        this.changeNotes = new TreeSet<>();
-        this.price = 0;
     }
 
 }

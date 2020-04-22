@@ -31,7 +31,7 @@ public class DefaultClassInfo extends DefaultNode implements IClassInfo {
     public DefaultClassInfo(String tagName, String canonicalName, List<IAttribute> attributes) {
         super(tagName, attributes);
         this.canonicalName = canonicalName;
-        this.addAttributes(DefaultAttribute.of(IAttribute.CLASS_ATTRIBUTE, canonicalName, Integer.MIN_VALUE));
+        this.addAttributes(DefaultAttribute.of(IAttribute.CLASS_ATTRIBUTE_NAME, canonicalName, Integer.MIN_VALUE));
     }
 
     public static IClassInfo of(String tagName, String canonicalName, IAttribute... attributes) {

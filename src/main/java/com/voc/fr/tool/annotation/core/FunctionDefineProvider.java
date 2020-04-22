@@ -35,7 +35,7 @@ public @interface FunctionDefineProvider {
      *
      * @return String
      */
-    String name() default "";
+    String name();
 
     /**
      * 函数描述

@@ -6,6 +6,7 @@ import com.voc.fr.tool.api.IPluginBaseInfo;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
 import com.voc.fr.tool.util.FineVersionHelp;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,8 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.MirroredTypeException;
 import java.lang.annotation.Annotation;
 
 /**
@@ -39,18 +42,16 @@ public class PluginInfoAnnotationProcessor extends BaseAnnotationProcessor imple
             pluginXmlContext.setFineVersion(fineVersion);
 
             IPluginBaseInfo pluginInfo = pluginXmlContext.getPluginBaseInfo();
-//            pluginInfo.setId(info.id());
-//            pluginInfo.setName(info.name());
-//            pluginInfo.setActive(info.active());
-//            if (StringUtils.isNotEmpty(info.version())) {
-//                pluginInfo.setVersion(info.version());
-//            }
-//            pluginInfo.setEnvVersion(info.envVersion());
-//            pluginInfo.setVendor(info.vendor());
-//            pluginInfo.setJarTime(info.jarTime());
-//            pluginInfo.setDescription(info.description());
-
-
+            pluginInfo.setId(info.id());
+            pluginInfo.setName(info.name());
+            pluginInfo.setActive(info.active());
+            if (StringUtils.isNotEmpty(info.version())) {
+                pluginInfo.setVersion(info.version());
+            }
+            pluginInfo.setEnvVersion(info.envVersion());
+            pluginInfo.setVendor(info.vendor());
+            pluginInfo.setJarTime(info.jarTime());
+            pluginInfo.setDescription(info.description());
 
 
 //            String qualifiedClassName;
@@ -67,8 +68,8 @@ public class PluginInfoAnnotationProcessor extends BaseAnnotationProcessor imple
 //                pluginInfo.setFunctionRecorder(qualifiedClassName);
 //            }
 
-//            pluginInfo.setMainPackage(info.mainPackage());
-//            pluginInfo.setPrice(info.price());
+            pluginInfo.setMainPackage(info.mainPackage());
+            pluginInfo.setPrice(info.price());
         }
     }
 

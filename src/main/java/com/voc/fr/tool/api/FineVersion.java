@@ -16,6 +16,6 @@ public enum FineVersion {
     V9("9.0"),
     V10("10.0");
 
-    private String version;
+    private final String version;
 
 }

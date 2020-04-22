@@ -2,6 +2,7 @@ package com.voc.fr.tool;
 
 import com.google.auto.service.AutoService;
 import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
+import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IAnnotationProcessor;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import com.voc.fr.tool.util.FineVersionHelp;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
+import static com.voc.fr.tool.CompilerOptions.*;
+
 /**
  * @author Wu Yujie
  * @email coffee377@dingtalk.com
@@ -27,14 +30,13 @@ import java.util.*;
  */
 @Slf4j
 @AutoService(Processor.class)
-@SupportedOptions({"pluginVersion", "pluginXmlDir", "pluginFineVersion"})
+@SupportedOptions({ENV_VERSION_OPTION, PLUGIN_VERSION_OPTION, PLUGIN_XML_DIR_OPTION})
 public class DefaultPluginXmlProcessor extends AbstractProcessor {
 
     private ApplicationContext applicationContext;
     private IPluginXmlContext pluginXmlContext;
-    private String pluginVersion;
-    private String pluginXmlDir;
     private ClassLoader originClassLoader;
+    private CompilerOptions options;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -62,30 +64,24 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.pluginVersion = processingEnv.getOptions().get("pluginVersion");
-        this.pluginXmlDir = processingEnv.getOptions().get("pluginXmlDir");
-        if (StringUtils.isEmpty(pluginVersion)) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "请确认插件版本参数设置是否正确 compilerArgs -ApluginVersion=[value]");
-        }
-        if (StringUtils.isEmpty(pluginXmlDir)) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "请确认插件描述文件存放目录参数设置是否正确 compilerArgs -ApluginXmlDir=[value]");
-        }
-        if (log.isInfoEnabled()) {
-            log.info("插件版本号：{} , 插件描述文件目录：{}", pluginVersion, pluginXmlDir);
+        this.options = new CompilerOptions(processingEnv);
+        if (!options.check()) {
+            return;
         }
         this.initClassLoader();
-        applicationContext = new AnnotationConfigApplicationContext(Config.class);
+        this.applicationContext = new AnnotationConfigApplicationContext(Config.class);
         this.pluginXmlContext = applicationContext.getBean(IPluginXmlContext.class);
 
-        String pluginFineVersion = processingEnv.getOptions().get("pluginFineVersion");
-        if (StringUtils.isNotEmpty(pluginFineVersion)) {
-            this.pluginXmlContext.setFineVersion(FineVersionHelp.fromVersion(pluginFineVersion));
+        if (StringUtils.isNotEmpty(options.getEnvVersion())) {
+            this.pluginXmlContext.setFineVersion(FineVersionHelp.fromVersion(options.getEnvVersion()));
+        } else {
+            this.pluginXmlContext.setFineVersion(FineVersion.V10);
         }
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (StringUtils.isEmpty(pluginVersion) || StringUtils.isEmpty(pluginXmlDir)) {
+        if (!this.options.isValid()) {
             return false;
         }
         /* 遍历 annotations 获取 annotation 进行处理 */
@@ -104,7 +100,7 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
         /* 处理结束再生产 plugin.xml */
         if (roundEnv.processingOver()) {
             try {
-                this.pluginXmlContext.generate(new File(pluginXmlDir), this.processingEnv.getFiler());
+                this.pluginXmlContext.generate(new File(options.getPluginXmlDir()), this.processingEnv.getFiler());
                 Thread.currentThread().setContextClassLoader(originClassLoader);
             } catch (Exception e) {
                 this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());

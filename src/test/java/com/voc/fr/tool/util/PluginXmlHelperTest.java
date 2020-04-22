@@ -18,20 +18,29 @@ public class PluginXmlHelperTest {
     @Test
     public void write() throws IOException {
         IPluginXmlContext pluginXmlContext = new DefaultPluginXmlContext();
-        PluginBaseInfo pluginInfo = (PluginBaseInfo) pluginXmlContext.getPluginBaseInfo();
+        IPluginBaseInfo pluginInfo = pluginXmlContext.getPluginBaseInfo();
         pluginInfo.setId("com.voc.demo");
         pluginInfo.setName("测试插件");
         pluginInfo.setVersion("1.0.0");
         pluginInfo.setEnvVersion("10.0");
         pluginInfo.setDescription("测试插件描述");
         pluginInfo.setVendor("coffee377");
-        pluginInfo.setMainPackage("com.voc.fe.plugin");
+        pluginInfo.setMainPackage("com.voc.fr.plugin");
         pluginInfo.addChangeNote(DefaultNote.of("2019-09-01", "", "初始化"));
         pluginInfo.addChangeNote(DefaultNote.of("2018-09-02", "", "初始化2"));
         pluginInfo.addChangeNote(DefaultNote.of("2017-09-03", "", "初始化3"));
 
         IAttribute attribute1 = DefaultAttribute.of("name", "AGE", 1);
         IAttribute attribute2 = DefaultAttribute.of("description", "AGE()计算年龄", 2);
+
+        pluginXmlContext.addImplementation("extra-decision",
+                DefaultClassInfo.of("LoginPageProvider",
+                        "com.voc.fr.plugin.login.VisualLoginPage"));
+
+        pluginXmlContext.addImplementation("extra-core",
+                DefaultClassInfo.of("LocaleFinder",
+                        "com.voc.fr.plugin.login.VisualLoginLocalFinder"));
+
         pluginXmlContext.addImplementation("extra-core",
                 DefaultClassInfo.of("FunctionDefineProvider",
                         "com.voc.fr.plugin.function.expand.Age", attribute1, attribute2));
@@ -47,6 +56,6 @@ public class PluginXmlHelperTest {
         pluginExtraInfo.setAttributes(element);
 
 
-        PluginXmlHelper.write(System.err, pluginXmlContext);
+        PluginXmlHelper.write(System.out, pluginXmlContext);
     }
 }

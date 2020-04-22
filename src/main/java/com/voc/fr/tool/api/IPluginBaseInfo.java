@@ -25,6 +25,21 @@ public interface IPluginBaseInfo extends Serializable {
     void setId(String id);
 
     /**
+     * 主包名，需要涵盖所有在xml中描述的类，默认 com.fr.plugin
+     *
+     * @return String
+     * @since 9.0
+     */
+    String getMainPackage();
+
+    /**
+     * 设置主包
+     *
+     * @param mainPackage String
+     */
+    void setMainPackage(String mainPackage);
+
+    /**
      * 获取插件的名字
      *
      * @return String
@@ -37,20 +52,6 @@ public interface IPluginBaseInfo extends Serializable {
      * @param name String
      */
     void setName(String name);
-
-    /**
-     * 插件是否在插件管理器中隐藏
-     *
-     * @return boolean
-     */
-    boolean isHidden();
-
-    /**
-     * 设置是否隐藏插件
-     *
-     * @param hidden boolean
-     */
-    void setHidden(boolean hidden);
 
     /**
      * 插件是否启用
@@ -67,18 +68,33 @@ public interface IPluginBaseInfo extends Serializable {
     void setActive(boolean active);
 
     /**
+     * 插件是否在插件管理器中隐藏
+     *
+     * @return boolean
+     */
+    boolean isHidden();
+
+    /**
+     * 设置是否隐藏插件
+     *
+     * @param hidden boolean
+     */
+    void setHidden(boolean hidden);
+
+
+    /**
      * 插件售价
      *
-     * @return Integer
+     * @return int
      */
-    Integer getPrice();
+    int getPrice();
 
     /**
      * 设置插件售价
      *
-     * @param price Integer
+     * @param price int
      */
-    void setPrice(Integer price);
+    void setPrice(int price);
 
     /**
      * 插件版本
@@ -185,21 +201,6 @@ public interface IPluginBaseInfo extends Serializable {
      * @param note INote
      */
     void addChangeNote(INote note);
-
-    /**
-     * 主包名，需要涵盖所有在xml中描述的类，默认 com.fr.plugin
-     *
-     * @return String
-     * @since 9.0
-     */
-    String getMainPackage();
-
-    /**
-     * 设置主包
-     *
-     * @param mainPackage String
-     */
-    void setMainPackage(String mainPackage);
 
 
 //    Object getLifecycleMonitor();

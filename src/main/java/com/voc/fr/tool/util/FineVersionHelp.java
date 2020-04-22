@@ -9,13 +9,17 @@ import com.voc.fr.tool.api.FineVersion;
  */
 public class FineVersionHelp {
 
+    public static final String V8 = "8.0";
+    public static final String V9 = "9.0";
+    public static final String V10 = "10.0";
+
     public static FineVersion fromEnvVersion(String envVersion) {
         String v = envVersion.trim();
-        if (v.matches("8.0")) {
+        if (v.matches(V8)) {
             return FineVersion.V8;
-        } else if (v.matches("9.0")) {
+        } else if (v.matches(V9)) {
             return FineVersion.V9;
-        } else if (v.matches("10.0")) {
+        } else if (v.matches(V10)) {
             return FineVersion.V10;
         }
         return FineVersion.V10;
@@ -23,11 +27,11 @@ public class FineVersionHelp {
 
     public static FineVersion fromVersion(String version) {
         String v = version.trim();
-        if (v.startsWith("8.0")) {
+        if (v.startsWith(V8)) {
             return FineVersion.V8;
-        } else if (v.startsWith("9.0")) {
+        } else if (v.startsWith(V9)) {
             return FineVersion.V9;
-        } else if (v.startsWith("10.0")) {
+        } else if (v.startsWith(V10)) {
             return FineVersion.V10;
         }
         return FineVersion.V10;

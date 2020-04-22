@@ -12,7 +12,7 @@ public interface IAttribute extends Ordered {
     /**
      * 类属性
      */
-    String CLASS_ATTRIBUTE = "class";
+    String CLASS_ATTRIBUTE_NAME = "class";
 
     /**
      * 属性名称

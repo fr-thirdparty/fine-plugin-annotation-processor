@@ -38,7 +38,7 @@ public class DefaultAttribute implements IAttribute {
 
     @Override
     public boolean isClassAttribute() {
-        return CLASS_ATTRIBUTE.equals(name);
+        return CLASS_ATTRIBUTE_NAME.equals(name);
     }
 
     public static IAttribute of(String name, String value, int order) {
