@@ -116,13 +116,13 @@ public class PluginXmlHelper {
      * @param parentElement   Element
      * @param implementations Map<String, Set<IClassInfo>>
      */
-    private static void addImplementation(Element parentElement, Map<String, Set<IClassInfo>> implementations) {
+    private static void addImplementation(Element parentElement, Map<String, Set<IClassInfoNode>> implementations) {
         if (implementations != null && !implementations.isEmpty()) {
-            for (Map.Entry<String, Set<IClassInfo>> entry : implementations.entrySet()) {
+            for (Map.Entry<String, Set<IClassInfoNode>> entry : implementations.entrySet()) {
                 String module = entry.getKey();
                 if (StringUtils.isNotEmpty(module)) {
                     Element moduleElement = parentElement.addElement(module);
-                    Set<IClassInfo> classInfos = entry.getValue();
+                    Set<IClassInfoNode> classInfos = entry.getValue();
                     classInfos.forEach(
                             classInfo -> addElement(moduleElement, classInfo)
                     );
@@ -137,9 +137,9 @@ public class PluginXmlHelper {
      * @param parentElement     Element
      * @param classInfoIterator Iterator<IClassInfo>
      */
-    private static void addFunctionRecorder(Element parentElement, Iterator<IClassInfo> classInfoIterator) {
+    private static void addFunctionRecorder(Element parentElement, Iterator<IClassInfoNode> classInfoIterator) {
         if (classInfoIterator != null && classInfoIterator.hasNext()) {
-            IClassInfo classInfo = classInfoIterator.next();
+            IClassInfoNode classInfo = classInfoIterator.next();
             addElement(parentElement, classInfo);
         }
     }

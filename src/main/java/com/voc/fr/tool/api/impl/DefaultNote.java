@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /**
  * @author Wu Yujie
@@ -34,7 +35,7 @@ public class DefaultNote implements INote {
     public int compareTo(@NotNull INote o) {
         /*按日期降序排列*/
         return LocalDate.parse(o.getDateOf(), DateTimeFormatter.ofPattern(o.getFormat()))
-                .compareTo(LocalDate.parse(this.getDateOf(), DateTimeFormatter.ofPattern(this.format)));
+                .compareTo(LocalDate.parse(this.getDateOf(), DateTimeFormatter.ofPattern(this.getFormat())));
     }
 
     public static DefaultNote of(String dateOf, String content) {

@@ -1,14 +1,15 @@
 package com.voc.fr.tool.util;
 
 import com.sun.tools.javac.code.Attribute;
+import com.sun.tools.javac.code.Scope;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,86 +21,86 @@ import java.util.Map;
 @Slf4j
 public class AnnotationValueUtils {
 
-    /**
-     * @param element         元素
-     * @param annotationClass 注解类
-     * @param key             键名（注解内方法名）
-     * @return Object
-     */
-    public static Object getAnnotationValue(Element element, Class<? extends Annotation> annotationClass, String key) {
-        AnnotationMirror annotationMirror = getAnnotationMirror(element, annotationClass);
-        AnnotationValue annotationValue = getAnnotationValue(annotationMirror, key);
-        return getAnnotationValue(annotationValue);
-    }
-
-
-    /**
-     * @param element         元素
-     * @param annotationClass 注解类
-     * @param key             键名（注解内方法名）
-     * @return Object
-     */
-    public static Object getQualifiedClassName(Element element, Class<? extends Annotation> annotationClass, String key) {
-        Object annotationValue = getAnnotationValue(element, annotationClass, key);
-        if (annotationValue instanceof List) {
-            List<String> s = new ArrayList<>();
-            List values = (List) annotationValue;
-            for (Object o : values) {
-                if (o instanceof Attribute.Class) {
-                    Attribute.Class c = (Attribute.Class) o;
-                    s.add(c.classType.toString());
-                }
-            }
-            return s;
-        } else if (annotationValue != null) {
-            return annotationValue.toString();
-        }
-        return null;
-    }
-
-
-    /**
-     * 获取元素指定注解的信息
-     *
-     * @param element         元素
-     * @param annotationClass 注解类
-     * @return AnnotationMirror
-     */
-    public static AnnotationMirror getAnnotationMirror(Element element, Class<? extends Annotation> annotationClass) {
+    public static Attribute.Compound getAttributeCompound(Element element, Class<? extends Annotation> annotationClass) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
-            if (annotationMirror.getAnnotationType().toString().equals(annotationClass.getName())) {
-                return annotationMirror;
+            if (annotationMirror instanceof Attribute.Compound
+                    && annotationMirror.getAnnotationType().toString().equals(annotationClass.getName())) {
+                return (Attribute.Compound) annotationMirror;
             }
         }
         return null;
     }
 
-    /**
-     * 获取注解指定键的值
-     *
-     * @param annotationMirror AnnotationMirror
-     * @param key              键名（注解内方法名）
-     * @return AnnotationValue
-     */
-    public static AnnotationValue getAnnotationValue(AnnotationMirror annotationMirror, String key) {
-        if (annotationMirror != null) {
-            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet()) {
-                if (entry.getKey().getSimpleName().toString().equals(key)) {
-                    return entry.getValue();
+    public static Map<Symbol.MethodSymbol, Attribute> getAllValues(Attribute.Compound compound) {
+        LinkedHashMap<Symbol.MethodSymbol, Attribute> map = new LinkedHashMap<>();
+        if (compound == null) {
+            return map;
+        }
+
+        Symbol.ClassSymbol classSymbol = (Symbol.ClassSymbol) compound.type.tsym;
+
+        /* 1. 默认值 */
+        for (Scope.Entry entry = classSymbol.members().elems; entry != null; entry = entry.sibling) {
+            if (entry.sym.kind == 16) {
+                Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) entry.sym;
+                Attribute attribute = methodSymbol.getDefaultValue();
+                if (attribute != null) {
+                    map.put(methodSymbol, attribute);
                 }
             }
         }
+
+        /* 2. 定义的值 */
+        for (Pair<Symbol.MethodSymbol, Attribute> pair : compound.values) {
+            map.put(pair.fst, pair.snd);
+        }
+
+        return map;
+    }
+
+    public static Object getValue(Element element, Attribute attribute, boolean isClassArray) {
+        if (attribute instanceof Attribute.Constant) {
+            Attribute.Constant constantAttribute = (Attribute.Constant) attribute;
+            return constantAttribute.getValue();
+        } else if (attribute instanceof Attribute.Enum) {
+            Attribute.Enum enumAttribute = (Attribute.Enum) attribute;
+            return enumAttribute.getValue().toString();
+        } else if (attribute instanceof Attribute.Class) {
+            Attribute.Class classAttribute = (Attribute.Class) attribute;
+            String qualifiedClassName = classAttribute.getValue().toString();
+            /* 如果 value 为 Void.class，则 value 值取当前被标记类元素的类完全限定名*/
+            if (Void.class.getCanonicalName().equals(qualifiedClassName)
+                    || Void.TYPE.getCanonicalName().equals(qualifiedClassName)) {
+                qualifiedClassName = element.asType().toString();
+            }
+            return qualifiedClassName;
+        } else if (attribute instanceof Attribute.Array) {
+            Attribute.Array arrayAttribute = (Attribute.Array) attribute;
+            List<Attribute> values = arrayAttribute.getValue();
+            Object[] objects = values.stream().map(attr -> getValue(element, attr, isClassArray)).toArray();
+            if (objects.length == 0 && isClassArray) {
+                return new String[]{element.asType().toString()};
+            }
+            return objects;
+        } else if (attribute instanceof Attribute.Error) {
+            return null;
+        }
         return null;
     }
 
-    /**
-     * 获取注解值
-     *
-     * @param annotationValue AnnotationValue
-     * @return Object
-     */
-    public static Object getAnnotationValue(AnnotationValue annotationValue) {
-        return annotationValue != null ? annotationValue.getValue() : null;
+    public static Map<String, Object> getAllReflectedValues(Element element, Class<? extends Annotation> annotationClass) {
+        Attribute.Compound compound = getAttributeCompound(element, annotationClass);
+        Map<Symbol.MethodSymbol, Attribute> map = getAllValues(compound);
+        Map<String, Object> result = new LinkedHashMap<>();
+        for (Map.Entry<Symbol.MethodSymbol, Attribute> entry : map.entrySet()) {
+            Symbol.MethodSymbol methodSymbol = entry.getKey();
+            boolean isClassArray = "java.lang.Class<?>[]".equals(methodSymbol.getReturnType().toString());
+            String key = methodSymbol.name.toString();
+            Object value = getValue(element, entry.getValue(), isClassArray);
+            result.put(key, value);
+        }
+        return result;
     }
+
 
 }

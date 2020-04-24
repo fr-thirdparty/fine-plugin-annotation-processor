@@ -8,7 +8,7 @@ package com.voc.fr.tool.api;
  * @email coffee377@dingtalk.com
  * @time 2019/08/30 16:57
  */
-public interface IClassInfo extends INode {
+public interface IClassInfoNode extends INode {
 
     /**
      * 实现类的完全限定名

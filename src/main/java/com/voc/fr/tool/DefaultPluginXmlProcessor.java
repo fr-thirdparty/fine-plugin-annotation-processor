@@ -40,7 +40,7 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> supportedAnnotationTypes = new LinkedHashSet<>();
+        Set<String> supportedAnnotationTypes = new LinkedHashSet<>(Arrays.asList(Config.FINE_FUNCTION_RECORDER));
         Reflections reflections = new Reflections("com.voc.fr.tool.annotation");
         reflections.getSubTypesOf(Annotation.class).stream().filter(
                 aClass -> {

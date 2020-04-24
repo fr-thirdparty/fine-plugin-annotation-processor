@@ -12,9 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(value = {"com.voc.fr.tool"})
 public class Config {
 
-//    @Bean
-//    public IPluginXmlContext defaultPluginXmlContext() {
-//        return new DefaultPluginXmlContext();
-//    }
+    public static final String[] FINE_FUNCTION_RECORDER = {
+            "com.fr.record.analyzer.EnableMetrics",
+            "com.fr.plugin.transform.FunctionRecorder"
+    };
+
 
 }

@@ -1,10 +1,11 @@
 package com.voc.fr.tool.util;
 
-import com.voc.fr.tool.annotation.plugin.ChangeNote;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
 import com.voc.fr.tool.api.impl.DefaultNote;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 /**
  * @author Wu Yujie
@@ -19,18 +20,18 @@ public class ChangeNoteUtils {
      * @param changeNote       ChangeNote
      * @param pluginXmlContext 上下文
      */
-    public static void resolver(ChangeNote changeNote, IPluginXmlContext pluginXmlContext) {
+    public static void resolver(Map<String, Object> changeNote, IPluginXmlContext pluginXmlContext) {
         if (changeNote != null) {
-            String dateOf = changeNote.dateOf();
-            String dateFormat = changeNote.format();
-            String[] content = changeNote.content();
+            String dateOf = (String) changeNote.get("dateOf");
+            String dateFormat = (String) changeNote.get("format");
+            Object[] contents = (Object[]) changeNote.get("content");
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < content.length; i++) {
-                if (StringUtils.isEmpty(content[i])) {
+            for (int i = 0; i < contents.length; i++) {
+                if (StringUtils.isEmpty(contents[i].toString())) {
                     continue;
                 }
-                sb.append(content[i]);
-                if (i < content.length - 1) {
+                sb.append(contents[i].toString());
+                if (i < contents.length - 1) {
                     sb.append(" ");
                 }
             }

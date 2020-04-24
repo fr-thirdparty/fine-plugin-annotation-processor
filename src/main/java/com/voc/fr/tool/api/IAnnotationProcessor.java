@@ -44,51 +44,49 @@ public interface IAnnotationProcessor extends Ordered {
      */
     void process(TypeElement annotation, RoundEnvironment env);
 
-    /**
-     * 处理被注解的元素
-     *
-     * @param pluginXmlContext 处理上下文
-     * @param element          被处理元素
-     * @param typeElement      注解元素
-     * @param processingEnv    处理环境
-     */
-    void process(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement, ProcessingEnvironment processingEnv);
+//    /**
+//     * 处理被注解的元素
+//     *
+//     * @param pluginXmlContext 处理上下文
+//     * @param element          被处理元素
+//     * @param typeElement      注解元素
+//     * @param processingEnv    处理环境
+//     * @see #process4PluginXmlContext(IPluginXmlContext, Element, TypeElement)
+//     * @deprecated
+//     */
+//    void process(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement, ProcessingEnvironment processingEnv);
+
+//    /**
+//     * 处理被注解的元素
+//     *
+//     * @param pluginXmlContext 处理上下文
+//     * @param element          被处理元素
+//     * @param typeElement      注解元素
+//     */
+//    void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement);
 
     /**
      * 是否是指定的注解类型
      *
-     * @param annotation 元素类型
+     * @param elements 元素类型
      * @return boolean
      */
-    boolean support(TypeElement annotation);
+    boolean support(TypeElement elements);
+
+//    /**
+//     * 是否是指定的注解类型中的任何一个
+//     *
+//     * @param elements 元素类型
+//     * @return boolean
+//     */
+//    boolean supportAny(TypeElement[] elements);
 
     /**
-     * 获取插件接口标签
-     *
-     * @param element         元素
-     * @param typeElement     接口注解
-     * @param annotationClass 注解类
-     * @return 标签名称
-     * @deprecated
-     */
-    String getXmlTag(Element element, TypeElement typeElement, Class<? extends Annotation> annotationClass);
-
-    /**
-     * 获取插件接口标签
+     * 获取插件模块接口标签
      *
      * @param typeElement 接口注解
      * @return 标签名称
      */
-    String getXmlTag(TypeElement typeElement);
-
-    /**
-     * 获取元素上注解的值
-     *
-     * @param element         元素
-     * @param annotationClass 注解类
-     * @param key             键名（注解内方法名）
-     * @return Object
-     */
-    Object getAnnotationValue(Element element, Class<? extends Annotation> annotationClass, String key);
+    String getModuleTag(TypeElement typeElement);
 
 }

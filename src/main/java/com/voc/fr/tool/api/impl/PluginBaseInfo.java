@@ -4,7 +4,9 @@ import com.voc.fr.tool.api.INote;
 import com.voc.fr.tool.api.IPluginBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -89,6 +91,24 @@ public class PluginBaseInfo implements IPluginBaseInfo {
             this.changeNotes = new TreeSet<>();
         }
         this.changeNotes.add(note);
+    }
+
+    @Override
+    public IPluginBaseInfo from(Map<String, Object> annotationValue) {
+        this.setId((String) annotationValue.get("id"));
+        this.setName((String) annotationValue.get("name"));
+        this.setActive((Boolean) annotationValue.get("active"));
+        if (StringUtils.isNotEmpty((CharSequence) annotationValue.get("version"))) {
+            this.setVersion((String) annotationValue.get("version"));
+        }
+        this.setEnvVersion((String) annotationValue.get("envVersion"));
+        this.setVendor((String) annotationValue.get("vendor"));
+        this.setJarTime((String) annotationValue.get("jarTime"));
+        this.setDescription((String) annotationValue.get("description"));
+
+        this.setMainPackage((String) annotationValue.get("mainPackage"));
+        this.setPrice((Integer) annotationValue.get("price"));
+        return this;
     }
 
 }

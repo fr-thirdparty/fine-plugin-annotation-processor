@@ -40,7 +40,7 @@ public interface IPluginXmlContext {
      *
      * @return Map
      */
-    Map<String, Set<IClassInfo>> getImplementation();
+    Map<String, Set<IClassInfoNode>> getImplementation();
 
     /**
      * 添加接口实现类
@@ -48,21 +48,21 @@ public interface IPluginXmlContext {
      * @param moduleXmlTag 接口所属模块标签名称
      * @param classInfo    接口实现类信息
      */
-    void addImplementation(String moduleXmlTag, IClassInfo classInfo);
+    void addImplementation(String moduleXmlTag, IClassInfoNode classInfo);
 
     /**
      * 功能点记录类
      *
      * @return List<IClassInfo>
      */
-    Set<IClassInfo> getFunctionRecorder();
+    Set<IClassInfoNode> getFunctionRecorder();
 
     /**
      * 添加功能点记录类
      *
      * @param classInfo IClassInfo
      */
-    void addFunctionRecorder(IClassInfo classInfo);
+    void addFunctionRecorder(IClassInfoNode classInfo);
 
     /**
      * 插件额外信息

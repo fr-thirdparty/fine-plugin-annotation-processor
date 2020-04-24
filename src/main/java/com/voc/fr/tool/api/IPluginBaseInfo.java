@@ -1,6 +1,7 @@
 package com.voc.fr.tool.api;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -203,13 +204,12 @@ public interface IPluginBaseInfo extends Serializable {
     void addChangeNote(INote note);
 
 
-//    Object getLifecycleMonitor();
-//
-//    Object getPreferPackages();
-//
-//    Object getDependence();
-//
-//    Object getAttributes();
-//
-//    Object getMoveAfterInstall();
+    /**
+     * 从Map构建插件基础信息
+     *
+     * @param av Map<String, Object>
+     * @return IPluginBaseInfo
+     */
+    IPluginBaseInfo from(Map<String, Object> av);
+
 }

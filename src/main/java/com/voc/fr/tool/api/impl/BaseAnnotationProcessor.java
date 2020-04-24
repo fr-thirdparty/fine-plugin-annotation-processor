@@ -1,7 +1,6 @@
 package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.annotation.Module;
-import com.voc.fr.tool.annotation.decision.LoginPageProvider;
 import com.voc.fr.tool.api.*;
 import com.voc.fr.tool.util.AnnotationValueUtils;
 import org.slf4j.Logger;
@@ -12,9 +11,11 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.MirroredTypeException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Wu Yujie
@@ -23,9 +24,9 @@ import java.lang.annotation.Annotation;
  */
 public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
 
-    private IPluginXmlContext pluginXmlContext;
+    protected IPluginXmlContext pluginXmlContext;
 
-    private ProcessingEnvironment processingEnv;
+    protected ProcessingEnvironment processingEnv;
 
     /**
      * 注解处理器日志记录器
@@ -66,49 +67,61 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
                 logger.debug("Annotation：{}", annotation.getQualifiedName());
             }
             for (Element element : env.getElementsAnnotatedWith(annotation)) {
-                process(pluginXmlContext, element, annotation, processingEnv);
+                this.process4PluginXmlContext(pluginXmlContext, element, annotation);
             }
         }
     }
 
-    @Override
-    public void process(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement, ProcessingEnvironment processingEnv) {
-        String xmlTag = this.getXmlTag(element, typeElement, this.getAnnotationClass());
+    protected void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
+        this.processClass(pluginXmlContext, element, typeElement);
+    }
+
+    protected void processClass(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
         if (element.getKind() == ElementKind.CLASS) {
-            Object value = AnnotationValueUtils.getQualifiedClassName(element, getAnnotationClass(), "value");
-            logger.error("{}", value);
-            LoginPageProvider provider = element.getAnnotation(LoginPageProvider.class);
-            String qualifiedClassName;
 
-            try {
-                Class<?> clazz = provider.value();
-                qualifiedClassName = clazz.getCanonicalName();
-            } catch (MirroredTypeException mte) {
-                DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
-                TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
-                qualifiedClassName = classTypeElement.getQualifiedName().toString();
-            }
+            Map<String, Object> values = AnnotationValueUtils.getAllReflectedValues(element, getAnnotationClass());
 
-            /*如果 value 为 Void.class，则 value 值取当前被标记类元素的类完全限定名*/
-            if (Void.class.getCanonicalName().equals(qualifiedClassName)) {
-                qualifiedClassName = element.asType().toString();
-            }
+            List<IClassInfoNode> infoNodes = annotationValue2ClassInfoNode(values, "value");
 
-            pluginXmlContext.addImplementation(xmlTag, DefaultClassInfo.of(this.getAnnotationClass(), qualifiedClassName));
+            String moduleTag = this.getModuleTag(typeElement);
+
+            infoNodes.forEach(classInfoNode -> pluginXmlContext.addImplementation(moduleTag, classInfoNode));
         }
     }
 
-    public String getClassName() {
-        return "";
+    /**
+     * 注解信息转IClassInfoNode
+     *
+     * @param values   注解信息
+     * @param classKey 类对应的键值
+     * @return IClassInfoNode
+     */
+    protected List<IClassInfoNode> annotationValue2ClassInfoNode(Map<String, Object> values, String classKey) {
+        IAttribute[] attributes = values.entrySet()
+                .stream()
+                .filter(entry -> !entry.getKey().equals(classKey))
+                .map(entry -> DefaultAttribute.of(entry.getKey(), entry.getValue().toString(), 0))
+                .toArray(IAttribute[]::new);
+
+        List<String> canonicalNames = new ArrayList<>();
+        Object object = values.get(classKey);
+        if (object.getClass().isArray()) {
+            Object[] arr = (Object[]) object;
+            for (Object o : arr) {
+                canonicalNames.add(o.toString());
+            }
+        } else {
+            canonicalNames.add(object.toString());
+        }
+        return canonicalNames.stream()
+                .map(canonicalName -> DefaultClassInfoNode.of(this.getAnnotationClass(), canonicalName, attributes))
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public String getXmlTag(Element element, TypeElement typeElement, Class<? extends Annotation> annotationClass) {
-        return this.getXmlTag(typeElement);
-    }
+    ;
 
     @Override
-    public String getXmlTag(TypeElement typeElement) {
+    public String getModuleTag(TypeElement typeElement) {
         Module module = typeElement.getAnnotation(Module.class);
         if (module != null && this.getModule() != null) {
             FineModule fineModule = module.value();
@@ -118,14 +131,9 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
     }
 
     @Override
-    public Object getAnnotationValue(Element element, Class<? extends Annotation> annotationClass, String key) {
-        return AnnotationValueUtils.getAnnotationValue(element, annotationClass, key);
-    }
-
-    @Override
-    public boolean support(TypeElement annotation) {
+    public boolean support(TypeElement element) {
         if (getAnnotationClass() != null) {
-            return this.support(annotation, getAnnotationClass());
+            return this.support(element, getAnnotationClass());
         }
         return false;
     }

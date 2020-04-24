@@ -83,5 +83,5 @@ public @interface PluginInfo {
      * 插件的功能描述
      */
     String description() default "演示插件";
-    
+
 }

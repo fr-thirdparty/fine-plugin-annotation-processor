@@ -31,12 +31,12 @@ public class DefaultPluginXmlContext implements IPluginXmlContext {
     private IPluginBaseInfo pluginBaseInfo;
 
     @Setter
-    private Set<IClassInfo> functionRecorder;
+    private Set<IClassInfoNode> functionRecorder;
 
     @Setter
     private IPluginExtraInfo pluginExtraInfo;
 
-    private Map<String, Set<IClassInfo>> implementation;
+    private Map<String, Set<IClassInfoNode>> implementation;
 
     public DefaultPluginXmlContext() {
         this.pluginBaseInfo = new PluginBaseInfo();
@@ -44,7 +44,7 @@ public class DefaultPluginXmlContext implements IPluginXmlContext {
     }
 
     @Override
-    public void addImplementation(String moduleXmlTag, IClassInfo classInfo) {
+    public void addImplementation(String moduleXmlTag, IClassInfoNode classInfo) {
         if (StringUtils.isNotEmpty(moduleXmlTag)) {
             if (this.implementation == null) {
                 this.implementation = new TreeMap<>();
@@ -57,7 +57,10 @@ public class DefaultPluginXmlContext implements IPluginXmlContext {
     }
 
     @Override
-    public void addFunctionRecorder(IClassInfo classInfo) {
+    public void addFunctionRecorder(IClassInfoNode classInfo) {
+        if (classInfo == null) {
+            return;
+        }
         if (this.functionRecorder == null) {
             this.functionRecorder = new TreeSet<>();
         }

@@ -1,5 +1,7 @@
 package com.voc.fr.tool.api;
 
+import java.util.Map;
+
 /**
  * @author Wu Yujie
  * @email coffee377@dingtalk.com
@@ -27,5 +29,5 @@ public interface INote extends Comparable<INote> {
      * @return String
      */
     String getContent();
-
+    
 }

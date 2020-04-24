@@ -1,11 +1,12 @@
 package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.api.IAttribute;
-import com.voc.fr.tool.api.IClassInfo;
+import com.voc.fr.tool.api.IClassInfoNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -21,22 +22,24 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class DefaultClassInfo extends DefaultNode implements IClassInfo {
+public class DefaultClassInfoNode extends DefaultNode implements IClassInfoNode {
 
     /**
      * 类的完全限定名
      */
     private String canonicalName;
 
-    public DefaultClassInfo(String tagName, String canonicalName, List<IAttribute> attributes) {
+    public DefaultClassInfoNode(String tagName, String canonicalName, List<IAttribute> attributes) {
         super(tagName, attributes);
         this.canonicalName = canonicalName;
-        this.addAttributes(DefaultAttribute.of(IAttribute.CLASS_ATTRIBUTE_NAME, canonicalName, Integer.MIN_VALUE));
+        if (StringUtils.isNotEmpty(canonicalName)) {
+            this.addAttributes(DefaultAttribute.of(IAttribute.CLASS_ATTRIBUTE_NAME, canonicalName, Integer.MIN_VALUE));
+        }
     }
 
-    public static IClassInfo of(String tagName, String canonicalName, IAttribute... attributes) {
+    public static IClassInfoNode of(String tagName, String canonicalName, IAttribute... attributes) {
         List<IAttribute> attributeList = new ArrayList<>(Arrays.asList(attributes));
-        return new DefaultClassInfo(tagName, canonicalName, attributeList);
+        return new DefaultClassInfoNode(tagName, canonicalName, attributeList);
     }
 
     /**
@@ -47,7 +50,7 @@ public class DefaultClassInfo extends DefaultNode implements IClassInfo {
      * @param attributes      IAttribute[]
      * @return IClassInfo
      */
-    public static IClassInfo of(Class<? extends Annotation> annotationClass, String canonicalName, IAttribute... attributes) {
+    public static IClassInfoNode of(Class<? extends Annotation> annotationClass, String canonicalName, IAttribute... attributes) {
         return of(annotationClass.getSimpleName(), canonicalName, attributes);
     }
 
