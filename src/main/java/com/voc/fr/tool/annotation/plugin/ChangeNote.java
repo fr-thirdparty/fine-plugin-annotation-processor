@@ -36,6 +36,6 @@ public @interface ChangeNote {
      *
      * @return 更新日志内容数组
      */
-    String[] content() default {};
+    String[] contents() default {};
 
 }

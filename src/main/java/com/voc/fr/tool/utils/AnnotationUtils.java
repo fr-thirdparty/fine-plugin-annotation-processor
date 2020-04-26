@@ -1,9 +1,13 @@
-package com.voc.fr.tool.util;
+package com.voc.fr.tool.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Scope;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Pair;
+import com.voc.fr.tool.api.impl.DefaultNote;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -19,9 +23,9 @@ import java.util.Map;
  * @time 2019/04/03 15:25
  */
 @Slf4j
-public class AnnotationValueUtils {
+public class AnnotationUtils {
 
-    public static Attribute.Compound getAttributeCompound(Element element, Class<? extends Annotation> annotationClass) {
+    private static Attribute.Compound getAttributeCompound(Element element, Class<? extends Annotation> annotationClass) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             if (annotationMirror instanceof Attribute.Compound
                     && annotationMirror.getAnnotationType().toString().equals(annotationClass.getName())) {
@@ -31,7 +35,7 @@ public class AnnotationValueUtils {
         return null;
     }
 
-    public static Map<Symbol.MethodSymbol, Attribute> getAllValues(Attribute.Compound compound) {
+    private static Map<Symbol.MethodSymbol, Attribute> getAllValues(Attribute.Compound compound) {
         LinkedHashMap<Symbol.MethodSymbol, Attribute> map = new LinkedHashMap<>();
         if (compound == null) {
             return map;
@@ -58,8 +62,13 @@ public class AnnotationValueUtils {
         return map;
     }
 
-    public static Object getValue(Element element, Attribute attribute, boolean isClassArray) {
-        if (attribute instanceof Attribute.Constant) {
+    private static Object getValue(Element element, Symbol.MethodSymbol methodSymbol, Attribute attribute) {
+        if (attribute instanceof Attribute.Compound) {
+            Attribute.Compound compoundAttribute = (Attribute.Compound) attribute;
+            Map<Symbol.MethodSymbol, Attribute> allValues = getAllValues(compoundAttribute);
+            Type returnType = methodSymbol.getReturnType();
+            return forBean(element, allValues, DefaultNote.class);
+        } else if (attribute instanceof Attribute.Constant) {
             Attribute.Constant constantAttribute = (Attribute.Constant) attribute;
             return constantAttribute.getValue();
         } else if (attribute instanceof Attribute.Enum) {
@@ -77,30 +86,60 @@ public class AnnotationValueUtils {
         } else if (attribute instanceof Attribute.Array) {
             Attribute.Array arrayAttribute = (Attribute.Array) attribute;
             List<Attribute> values = arrayAttribute.getValue();
-            Object[] objects = values.stream().map(attr -> getValue(element, attr, isClassArray)).toArray();
-            if (objects.length == 0 && isClassArray) {
-                return new String[]{element.asType().toString()};
+            Object[] objects = values.stream().map(attr -> getValue(element, methodSymbol, attr)).toArray();
+            if (objects.length == 0) {
+                Type.ArrayType arrayType = (Type.ArrayType) methodSymbol.getReturnType();
+                if (Class.class.getCanonicalName().equals(arrayType.elemtype.tsym.toString())) {
+                    return new String[]{element.asType().toString()};
+                }
             }
             return objects;
-        } else if (attribute instanceof Attribute.Error) {
+        } else {
             return null;
         }
+    }
+
+    private static Object dd() {
         return null;
     }
 
-    public static Map<String, Object> getAllReflectedValues(Element element, Class<? extends Annotation> annotationClass) {
-        Attribute.Compound compound = getAttributeCompound(element, annotationClass);
-        Map<Symbol.MethodSymbol, Attribute> map = getAllValues(compound);
+    private static Map<String, Object> getValues(Element element, Map<Symbol.MethodSymbol, Attribute> attributeMap, Class<?> clazz) {
         Map<String, Object> result = new LinkedHashMap<>();
-        for (Map.Entry<Symbol.MethodSymbol, Attribute> entry : map.entrySet()) {
+        for (Map.Entry<Symbol.MethodSymbol, Attribute> entry : attributeMap.entrySet()) {
             Symbol.MethodSymbol methodSymbol = entry.getKey();
-            boolean isClassArray = "java.lang.Class<?>[]".equals(methodSymbol.getReturnType().toString());
             String key = methodSymbol.name.toString();
-            Object value = getValue(element, entry.getValue(), isClassArray);
+            Object value = getValue(element, methodSymbol, entry.getValue());
             result.put(key, value);
         }
         return result;
     }
 
+    public static Map<String, Object> getValues(Element element, Map<Symbol.MethodSymbol, Attribute> attributeMap) {
+        return getValues(element, attributeMap, null);
+    }
+
+    private static <T> T forBean(Element element, Map<Symbol.MethodSymbol, Attribute> attributeMap, Class<T> clazz) {
+        Map<String, Object> values = getValues(element, attributeMap, clazz);
+        byte[] bytes = JSONObject.toJSONBytes(values);
+        return JSON.parseObject(bytes, clazz);
+    }
+
+    /**
+     * 获取注解值
+     *
+     * @param element         Element
+     * @param annotationClass Class<? extends Annotation>
+     * @return Map<String, Object>
+     */
+    public static Map<String, Object> getValues(Element element, Class<? extends Annotation> annotationClass) {
+        Attribute.Compound compound = getAttributeCompound(element, annotationClass);
+        Map<Symbol.MethodSymbol, Attribute> map = getAllValues(compound);
+        return getValues(element, map);
+    }
+
+    public static <T> T forBean(Element element, Class<? extends Annotation> annotationClass, Class<T> clazz) {
+        byte[] bytes = JSONObject.toJSONBytes(getValues(element, annotationClass));
+        return JSON.parseObject(bytes, clazz);
+    }
 
 }

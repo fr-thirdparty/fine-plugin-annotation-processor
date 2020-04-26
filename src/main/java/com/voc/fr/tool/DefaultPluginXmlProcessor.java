@@ -5,7 +5,7 @@ import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
 import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IAnnotationProcessor;
 import com.voc.fr.tool.api.IPluginXmlContext;
-import com.voc.fr.tool.util.FineVersionHelp;
+import com.voc.fr.tool.utils.FineVersionHelp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -95,7 +95,6 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
                 processor.setProcessingEnv(this.processingEnv);
                 processor.process(typeElement, roundEnv);
             });
-
         }
         /* 处理结束再生产 plugin.xml */
         if (roundEnv.processingOver()) {

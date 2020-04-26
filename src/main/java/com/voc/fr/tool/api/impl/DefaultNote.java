@@ -1,13 +1,16 @@
 package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.api.INote;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 /**
  * @author Wu Yujie
@@ -24,11 +27,11 @@ public class DefaultNote implements INote {
 
     private String format = "yyyy-MM-dd";
 
-    private String content;
+    private String[] contents;
 
-    public DefaultNote(String dateOf, String content) {
+    public DefaultNote(String dateOf, String[] contents) {
         this.dateOf = dateOf;
-        this.content = content;
+        this.contents = contents;
     }
 
     @Override
@@ -38,12 +41,31 @@ public class DefaultNote implements INote {
                 .compareTo(LocalDate.parse(this.getDateOf(), DateTimeFormatter.ofPattern(this.getFormat())));
     }
 
-    public static DefaultNote of(String dateOf, String content) {
+    public static DefaultNote of(String dateOf, String... content) {
         return new DefaultNote(dateOf, content);
     }
 
     @Override
-    public String toString() {
-        return MessageFormat.format("日期：{0} | 更新日志：{1}", this.dateOf, this.content);
+    public String getContent() {
+        if (contents == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < contents.length; i++) {
+            if (StringUtils.isEmpty(contents[i])) {
+                continue;
+            }
+            sb.append(contents[i]);
+            if (i < contents.length - 1) {
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("日期：{0} | 更新日志：{1}", this.dateOf, this.getContent());
+    }
+
 }

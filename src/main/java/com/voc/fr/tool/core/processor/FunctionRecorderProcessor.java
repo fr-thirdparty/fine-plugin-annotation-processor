@@ -1,6 +1,8 @@
 package com.voc.fr.tool.core.processor;
 
 import com.fr.plugin.transform.FunctionRecorder;
+import com.fr.record.analyzer.EnableMetrics;
+import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IClassInfoNode;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
@@ -21,7 +23,15 @@ public class FunctionRecorderProcessor extends BaseAnnotationProcessor {
 
     @Override
     public Class<? extends Annotation> getAnnotationClass() {
-        return FunctionRecorder.class;
+        FineVersion fineVersion = pluginXmlContext.getFineVersion();
+        switch (fineVersion) {
+            case V8:
+            case V9:
+                return FunctionRecorder.class;
+            case V10:
+            default:
+                return EnableMetrics.class;
+        }
     }
 
     @Override

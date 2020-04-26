@@ -36,6 +36,13 @@ public interface IPluginXmlContext {
     IPluginBaseInfo getPluginBaseInfo();
 
     /**
+     * 设置插件信息
+     *
+     * @param info IPluginBaseInfo
+     */
+    void setPluginBaseInfo(IPluginBaseInfo info);
+
+    /**
      * 获取接口实现类
      *
      * @return Map

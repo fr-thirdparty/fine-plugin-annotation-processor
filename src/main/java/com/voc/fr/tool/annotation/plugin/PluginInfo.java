@@ -1,7 +1,7 @@
 package com.voc.fr.tool.annotation.plugin;
 
 import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
-import com.voc.fr.tool.util.PluginXmlHelper;
+import com.voc.fr.tool.utils.PluginXmlHelper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

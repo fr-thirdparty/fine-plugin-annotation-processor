@@ -1,13 +1,11 @@
 package com.voc.fr.tool.v10.api;
 
-import com.voc.fr.tool.api.FineModule;
 import com.voc.fr.tool.api.IAttribute;
 import com.voc.fr.tool.api.impl.DefaultAttribute;
 import org.junit.Test;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

@@ -207,9 +207,9 @@ public interface IPluginBaseInfo extends Serializable {
     /**
      * 从Map构建插件基础信息
      *
-     * @param av Map<String, Object>
+     * @param annotationValue Map<String, Object>
      * @return IPluginBaseInfo
      */
-    IPluginBaseInfo from(Map<String, Object> av);
+    IPluginBaseInfo from(Map<String, Object> annotationValue);
 
 }

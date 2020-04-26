@@ -1,7 +1,7 @@
 package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.api.*;
-import com.voc.fr.tool.util.PluginXmlHelper;
+import com.voc.fr.tool.utils.PluginXmlHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;

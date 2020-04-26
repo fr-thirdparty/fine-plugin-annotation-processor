@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
 @Module(FineModule.CORE)
+@EnabledSupportedAnnotation
 public @interface JavaScriptFileHandler {
 
     /**

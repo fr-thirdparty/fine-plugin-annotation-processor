@@ -1,4 +1,4 @@
-package com.voc.fr.tool.util;
+package com.voc.fr.tool.utils;
 
 import com.voc.fr.tool.api.*;
 import org.apache.commons.lang3.StringUtils;
@@ -101,8 +101,7 @@ public class PluginXmlHelper {
             if (i > 0) {
                 sb.append("\n\t");
             }
-            sb.append("<p>").append("[").append(iNote.getDateOf()).append("] ")
-                    .append(iNote.getContent()).append("</p>");
+            sb.append("<p>").append("[").append(iNote.getDateOf()).append("] ").append(iNote.getContent()).append("</p>");
             if (i > 0 && i == notes.size() - 1) {
                 sb.append("\n");
             }

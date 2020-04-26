@@ -1,5 +1,7 @@
 package com.voc.fr.tool;
 
+import com.fr.plugin.transform.FunctionRecorder;
+import com.fr.record.analyzer.EnableMetrics;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,9 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 
     public static final String[] FINE_FUNCTION_RECORDER = {
-            "com.fr.record.analyzer.EnableMetrics",
-            "com.fr.plugin.transform.FunctionRecorder"
+            EnableMetrics.class.getCanonicalName(),
+            FunctionRecorder.class.getCanonicalName()
     };
-
 
 }

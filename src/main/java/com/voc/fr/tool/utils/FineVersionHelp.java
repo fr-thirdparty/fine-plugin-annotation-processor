@@ -1,4 +1,4 @@
-package com.voc.fr.tool.util;
+package com.voc.fr.tool.utils;
 
 import com.voc.fr.tool.api.FineVersion;
 

@@ -1,5 +1,6 @@
 package com.voc.fr.tool.annotation.design;
 
+import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
 import com.voc.fr.tool.annotation.Module;
 import com.voc.fr.tool.api.FineModule;
 
@@ -18,6 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
 @Module(FineModule.DESIGN)
+@EnabledSupportedAnnotation
 public @interface HyperlinkProvider {
 
     /**

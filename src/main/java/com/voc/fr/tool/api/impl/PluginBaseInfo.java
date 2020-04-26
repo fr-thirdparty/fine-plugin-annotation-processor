@@ -1,10 +1,11 @@
 package com.voc.fr.tool.api.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.voc.fr.tool.api.INote;
 import com.voc.fr.tool.api.IPluginBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -84,7 +85,6 @@ public class PluginBaseInfo implements IPluginBaseInfo {
      */
     private Set<INote> changeNotes;
 
-
     @Override
     public void addChangeNote(INote note) {
         if (this.changeNotes == null) {
@@ -95,19 +95,9 @@ public class PluginBaseInfo implements IPluginBaseInfo {
 
     @Override
     public IPluginBaseInfo from(Map<String, Object> annotationValue) {
-        this.setId((String) annotationValue.get("id"));
-        this.setName((String) annotationValue.get("name"));
-        this.setActive((Boolean) annotationValue.get("active"));
-        if (StringUtils.isNotEmpty((CharSequence) annotationValue.get("version"))) {
-            this.setVersion((String) annotationValue.get("version"));
-        }
-        this.setEnvVersion((String) annotationValue.get("envVersion"));
-        this.setVendor((String) annotationValue.get("vendor"));
-        this.setJarTime((String) annotationValue.get("jarTime"));
-        this.setDescription((String) annotationValue.get("description"));
-
-        this.setMainPackage((String) annotationValue.get("mainPackage"));
-        this.setPrice((Integer) annotationValue.get("price"));
+        byte[] bytes = JSON.toJSONBytes(annotationValue);
+        PluginBaseInfo info = JSON.parseObject(bytes, PluginBaseInfo.class);
+        BeanUtils.copyProperties(info, this, "changeNotes");
         return this;
     }
 

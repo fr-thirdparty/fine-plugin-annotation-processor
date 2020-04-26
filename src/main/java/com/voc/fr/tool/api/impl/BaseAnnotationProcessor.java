@@ -2,7 +2,7 @@ package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.annotation.Module;
 import com.voc.fr.tool.api.*;
-import com.voc.fr.tool.util.AnnotationValueUtils;
+import com.voc.fr.tool.utils.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,20 +73,19 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
     }
 
     protected void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
-        this.processClass(pluginXmlContext, element, typeElement);
+        if (element.getKind() == ElementKind.CLASS) {
+            this.process4Class(pluginXmlContext, element, typeElement);
+        }
     }
 
-    protected void processClass(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
-        if (element.getKind() == ElementKind.CLASS) {
+    protected void process4Class(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
+        Map<String, Object> values = AnnotationUtils.getValues(element, getAnnotationClass());
 
-            Map<String, Object> values = AnnotationValueUtils.getAllReflectedValues(element, getAnnotationClass());
+        List<IClassInfoNode> infoNodes = annotationValue2ClassInfoNode(values, "value");
 
-            List<IClassInfoNode> infoNodes = annotationValue2ClassInfoNode(values, "value");
+        String moduleTag = this.getModuleTag(typeElement);
 
-            String moduleTag = this.getModuleTag(typeElement);
-
-            infoNodes.forEach(classInfoNode -> pluginXmlContext.addImplementation(moduleTag, classInfoNode));
-        }
+        infoNodes.forEach(classInfoNode -> pluginXmlContext.addImplementation(moduleTag, classInfoNode));
     }
 
     /**
