@@ -2,27 +2,22 @@ package com.voc.fr.tool.api.impl;
 
 import com.voc.fr.tool.annotation.Module;
 import com.voc.fr.tool.api.*;
-import com.voc.fr.tool.utils.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Wu Yujie
  * @email coffee377@dingtalk.com
  * @time 2019/08/31 20:18
  */
-public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
+public abstract class AbstractAnnotationProcessor implements IAnnotationProcessor {
 
     protected IPluginXmlContext pluginXmlContext;
 
@@ -34,7 +29,7 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
     public final static Logger logger = LoggerFactory.getLogger("PluginXmlProcessor");
 
     @Override
-    public void setContext(IPluginXmlContext pluginXmlContext) {
+    public void setPluginXmlContext(IPluginXmlContext pluginXmlContext) {
         this.pluginXmlContext = pluginXmlContext;
     }
 
@@ -59,6 +54,7 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
 
     @Override
     public void process(TypeElement annotation, RoundEnvironment env) {
+        this.verify(this.pluginXmlContext, this.processingEnv);
         if (support(annotation)) {
             if (logger.isInfoEnabled()) {
                 logger.info("@{}", annotation.getSimpleName());
@@ -72,52 +68,19 @@ public abstract class BaseAnnotationProcessor implements IAnnotationProcessor {
         }
     }
 
-    protected void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
-        if (element.getKind() == ElementKind.CLASS) {
-            this.process4Class(pluginXmlContext, element, typeElement);
-        }
-    }
-
-    protected void process4Class(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
-        Map<String, Object> values = AnnotationUtils.getValues(element, getAnnotationClass());
-
-        List<IClassInfoNode> infoNodes = annotationValue2ClassInfoNode(values, "value");
-
-        String moduleTag = this.getModuleTag(typeElement);
-
-        infoNodes.forEach(classInfoNode -> pluginXmlContext.addImplementation(moduleTag, classInfoNode));
+    protected void verify(IPluginXmlContext pluginXmlContext, ProcessingEnvironment processingEnv) {
+        Assert.notNull(pluginXmlContext, "pluginXmlContext 不能为空");
+        Assert.notNull(processingEnv, "processingEnv 不能为空");
     }
 
     /**
-     * 注解信息转IClassInfoNode
+     * 插件描述文件处理上下环境
      *
-     * @param values   注解信息
-     * @param classKey 类对应的键值
-     * @return IClassInfoNode
+     * @param pluginXmlContext IPluginXmlContext
+     * @param element          Element
+     * @param typeElement      TypeElement
      */
-    protected List<IClassInfoNode> annotationValue2ClassInfoNode(Map<String, Object> values, String classKey) {
-        IAttribute[] attributes = values.entrySet()
-                .stream()
-                .filter(entry -> !entry.getKey().equals(classKey))
-                .map(entry -> DefaultAttribute.of(entry.getKey(), entry.getValue().toString(), 0))
-                .toArray(IAttribute[]::new);
-
-        List<String> canonicalNames = new ArrayList<>();
-        Object object = values.get(classKey);
-        if (object.getClass().isArray()) {
-            Object[] arr = (Object[]) object;
-            for (Object o : arr) {
-                canonicalNames.add(o.toString());
-            }
-        } else {
-            canonicalNames.add(object.toString());
-        }
-        return canonicalNames.stream()
-                .map(canonicalName -> DefaultClassInfoNode.of(this.getAnnotationClass(), canonicalName, attributes))
-                .collect(Collectors.toList());
-    }
-
-    ;
+    public abstract void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement);
 
     @Override
     public String getModuleTag(TypeElement typeElement) {

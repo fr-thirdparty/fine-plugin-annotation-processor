@@ -4,7 +4,7 @@ import com.voc.fr.tool.annotation.plugin.PluginInfo;
 import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IPluginBaseInfo;
 import com.voc.fr.tool.api.IPluginXmlContext;
-import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
+import com.voc.fr.tool.api.impl.AbstractAnnotationProcessor;
 import com.voc.fr.tool.utils.AnnotationUtils;
 import com.voc.fr.tool.utils.FineVersionHelp;
 import org.springframework.core.Ordered;
@@ -12,6 +12,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Map;
  * @time 2019/04/02 11:32
  */
 @Component
-public class PluginInfoProcessor extends BaseAnnotationProcessor implements PriorityOrdered {
+public class PluginInfoProcessor extends AbstractAnnotationProcessor implements PriorityOrdered {
 
     @Override
     public Class<? extends Annotation> getAnnotationClass() {
@@ -30,15 +31,16 @@ public class PluginInfoProcessor extends BaseAnnotationProcessor implements Prio
     }
 
     @Override
-    protected void process4Class(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
-        Map<String, Object> info = AnnotationUtils.getValues(element, getAnnotationClass());
+    public void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
+        if (element.getKind() == ElementKind.CLASS) {
+            Map<String, Object> info = AnnotationUtils.getValues(element, getAnnotationClass());
 
-        IPluginBaseInfo pluginInfo = pluginXmlContext.getPluginBaseInfo().from(info);
+            IPluginBaseInfo pluginInfo = pluginXmlContext.getPluginBaseInfo().from(info);
 
-        /* 设置插件使用报表版本，供后续处理器使用 */
-        FineVersion fineVersion = FineVersionHelp.fromEnvVersion(pluginInfo.getEnvVersion());
-        pluginXmlContext.setFineVersion(fineVersion);
-
+            /* 设置插件使用报表版本，供后续处理器使用 */
+            FineVersion fineVersion = FineVersionHelp.fromEnvVersion(pluginInfo.getEnvVersion());
+            pluginXmlContext.setFineVersion(fineVersion);
+        }
     }
 
     /**

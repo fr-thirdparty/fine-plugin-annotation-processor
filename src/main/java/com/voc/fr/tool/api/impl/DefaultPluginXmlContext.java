@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.processing.Filer;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Wu Yujie
@@ -35,6 +32,8 @@ public class DefaultPluginXmlContext implements IPluginXmlContext {
 
     @Setter
     private IPluginExtraInfo pluginExtraInfo;
+
+    private List<IAnnotationProcessor> processors;
 
     private Map<String, Set<IClassInfoNode>> implementation;
 
@@ -65,6 +64,19 @@ public class DefaultPluginXmlContext implements IPluginXmlContext {
             this.functionRecorder = new TreeSet<>();
         }
         this.functionRecorder.add(classInfo);
+    }
+
+    @Override
+    public List<IAnnotationProcessor> getProcessors() {
+        return new ArrayList<>(this.processors);
+    }
+
+    @Override
+    public void addProcessor(IAnnotationProcessor processor) {
+        if (this.processors == null) {
+            this.processors = new LinkedList<>();
+        }
+        this.processors.add(processor);
     }
 
     @Override

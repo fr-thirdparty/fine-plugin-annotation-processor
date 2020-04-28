@@ -2,7 +2,7 @@ package com.voc.fr.tool.core.processor;
 
 import com.voc.fr.tool.annotation.plugin.ChangeNote;
 import com.voc.fr.tool.api.IPluginXmlContext;
-import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
+import com.voc.fr.tool.api.impl.AbstractAnnotationProcessor;
 import com.voc.fr.tool.utils.ChangeNoteUtils;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.lang.annotation.Annotation;
  * @time 2019/03/15 10:01
  */
 @Component
-public class ChangeNoteProcessor extends BaseAnnotationProcessor {
+public class ChangeNoteProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public Class<? extends Annotation> getAnnotationClass() {
@@ -25,11 +25,10 @@ public class ChangeNoteProcessor extends BaseAnnotationProcessor {
     }
 
     @Override
-    protected void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
+    public void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
         if (element.getKind() == ElementKind.CLASS || element.getKind() == ElementKind.METHOD) {
             ChangeNoteUtils.resolverChangeNote(pluginXmlContext, element);
         }
     }
-
 
 }

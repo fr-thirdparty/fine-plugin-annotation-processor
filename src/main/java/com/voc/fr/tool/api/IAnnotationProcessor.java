@@ -4,9 +4,7 @@ import org.springframework.core.Ordered;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import java.lang.annotation.Annotation;
 
 /**
  * @author Wu Yujie
@@ -20,7 +18,7 @@ public interface IAnnotationProcessor extends Ordered {
      *
      * @param pluginXmlContext IPluginXmlContext
      */
-    void setContext(IPluginXmlContext pluginXmlContext);
+    void setPluginXmlContext(IPluginXmlContext pluginXmlContext);
 
     /**
      * 处理环境
@@ -44,27 +42,6 @@ public interface IAnnotationProcessor extends Ordered {
      */
     void process(TypeElement annotation, RoundEnvironment env);
 
-//    /**
-//     * 处理被注解的元素
-//     *
-//     * @param pluginXmlContext 处理上下文
-//     * @param element          被处理元素
-//     * @param typeElement      注解元素
-//     * @param processingEnv    处理环境
-//     * @see #process4PluginXmlContext(IPluginXmlContext, Element, TypeElement)
-//     * @deprecated
-//     */
-//    void process(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement, ProcessingEnvironment processingEnv);
-
-//    /**
-//     * 处理被注解的元素
-//     *
-//     * @param pluginXmlContext 处理上下文
-//     * @param element          被处理元素
-//     * @param typeElement      注解元素
-//     */
-//    void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement);
-
     /**
      * 是否是指定的注解类型
      *
@@ -72,14 +49,6 @@ public interface IAnnotationProcessor extends Ordered {
      * @return boolean
      */
     boolean support(TypeElement elements);
-
-//    /**
-//     * 是否是指定的注解类型中的任何一个
-//     *
-//     * @param elements 元素类型
-//     * @return boolean
-//     */
-//    boolean supportAny(TypeElement[] elements);
 
     /**
      * 获取插件模块接口标签

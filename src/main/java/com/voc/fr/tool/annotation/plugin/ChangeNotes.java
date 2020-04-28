@@ -1,6 +1,6 @@
 package com.voc.fr.tool.annotation.plugin;
 
-import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
+import com.voc.fr.tool.annotation.EnableFinePlugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@EnabledSupportedAnnotation
+@EnableFinePlugin
 public @interface ChangeNotes {
 
     /**

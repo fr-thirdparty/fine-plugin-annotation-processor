@@ -1,6 +1,6 @@
 package com.voc.fr.tool.annotation.plugin;
 
-import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
+import com.voc.fr.tool.annotation.EnableFinePlugin;
 import com.voc.fr.tool.utils.PluginXmlHelper;
 
 import java.lang.annotation.ElementType;
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
-@EnabledSupportedAnnotation
+@EnableFinePlugin
 public @interface PluginInfo {
 
     /**

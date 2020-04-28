@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
+import java.io.File;
 import java.text.MessageFormat;
 
 /**
@@ -74,7 +75,7 @@ public class CompilerOptions {
 
     @Override
     public String toString() {
-        return MessageFormat.format("环境版本号：{0}, 插件版本号：{1} , 插件描述文件目录：{2}",
+        return MessageFormat.format("环境版本：{0}, 插件版本：{1} , 插件描述文件：{2}" + File.separator + "plugin.xml",
                 this.envVersion, this.pluginVersion, this.pluginXmlDir);
     }
 }

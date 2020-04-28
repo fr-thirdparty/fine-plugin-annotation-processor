@@ -5,7 +5,7 @@ import com.fr.record.analyzer.EnableMetrics;
 import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IClassInfoNode;
 import com.voc.fr.tool.api.IPluginXmlContext;
-import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
+import com.voc.fr.tool.api.impl.AbstractAnnotationProcessor;
 import com.voc.fr.tool.api.impl.DefaultClassInfoNode;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
  * @time 2020/04/21 17:56
  */
 @Component
-public class FunctionRecorderProcessor extends BaseAnnotationProcessor {
+public class FunctionRecorderProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public Class<? extends Annotation> getAnnotationClass() {
@@ -35,7 +35,7 @@ public class FunctionRecorderProcessor extends BaseAnnotationProcessor {
     }
 
     @Override
-    protected void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
+    public void process4PluginXmlContext(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
         IClassInfoNode classInfoNode = DefaultClassInfoNode.of("function-recorder", element.asType().toString());
         pluginXmlContext.addFunctionRecorder(classInfoNode);
     }

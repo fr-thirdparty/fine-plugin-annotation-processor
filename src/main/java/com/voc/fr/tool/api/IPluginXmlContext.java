@@ -2,6 +2,7 @@ package com.voc.fr.tool.api;
 
 import javax.annotation.processing.Filer;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,6 +78,20 @@ public interface IPluginXmlContext {
      * @return IPluginExtraInfo
      */
     IPluginExtraInfo getPluginExtraInfo();
+
+    /**
+     * 获取所有实现处理器
+     *
+     * @return List<IAnnotationProcessor>
+     */
+    List<IAnnotationProcessor> getProcessors();
+
+    /**
+     * 添加处理器实现
+     *
+     * @param processor IAnnotationProcessor
+     */
+    void addProcessor(IAnnotationProcessor processor);
 
     /**
      * 生成 plugin.xml 文件

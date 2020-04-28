@@ -3,7 +3,7 @@ package com.voc.fr.tool.api;
 import java.util.List;
 
 /**
- * 插件之间也依赖
+ * 插件之间依赖
  *
  * @author Wu Yujie
  * @email coffee377@dingtalk.com

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.voc.fr.tool.annotation.plugin.ChangeNote;
 import com.voc.fr.tool.annotation.plugin.ChangeNotes;
 import com.voc.fr.tool.api.IPluginXmlContext;
-import com.voc.fr.tool.api.impl.BaseAnnotationProcessor;
+import com.voc.fr.tool.api.impl.AbstractAnnotationProcessor;
 import com.voc.fr.tool.api.impl.DefaultNote;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +46,7 @@ public class ChangeNoteUtils {
             if (StringUtils.isNotEmpty(dateFormat)) {
                 note.setFormat(dateFormat);
             }
-            BaseAnnotationProcessor.logger.debug(note.toString());
+            AbstractAnnotationProcessor.logger.debug(note.toString());
             pluginXmlContext.getPluginBaseInfo().addChangeNote(note);
         }
     }
@@ -64,7 +64,7 @@ public class ChangeNoteUtils {
     private static void resolverChangeNote(IPluginXmlContext pluginXmlContext, Map<String, Object> map) {
         byte[] bytes = JSONObject.toJSONBytes(map);
         DefaultNote note = JSON.parseObject(bytes, DefaultNote.class);
-        BaseAnnotationProcessor.logger.debug(note.toString());
+        AbstractAnnotationProcessor.logger.debug(note.toString());
         pluginXmlContext.getPluginBaseInfo().addChangeNote(note);
     }
 
@@ -79,7 +79,7 @@ public class ChangeNoteUtils {
 //                resolverChangeNote(pluginXmlContext, map);
 //            }
 //        }
-        System.out.println("s");
+//        System.out.println("s");
 //        Map<String,Object> value = (Map<String, Object>) changeNotes.get("value");
 //        for (Map.Entry<String, Object> entry : changeNotes.entrySet()) {
 //            resolverChangeNote(pluginXmlContext, entry);

@@ -1,6 +1,6 @@
 package com.voc.fr.tool.annotation.core;
 
-import com.voc.fr.tool.annotation.EnabledSupportedAnnotation;
+import com.voc.fr.tool.annotation.EnableFinePlugin;
 import com.voc.fr.tool.annotation.Module;
 import com.voc.fr.tool.api.FineModule;
 
@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
 @Module(FineModule.CORE)
-@EnabledSupportedAnnotation
+@EnableFinePlugin(auto = true)
 public @interface HttpHandlerProvider {
 
     /**

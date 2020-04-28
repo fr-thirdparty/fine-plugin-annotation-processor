@@ -39,6 +39,7 @@ public class PluginXmlHelper {
         }
         addExtraInfo(rootElement, pluginXmlContext.getPluginExtraInfo());
         OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setNewLineAfterDeclaration(false);
         XMLWriter writer = new XMLWriter(outputStream, format);
         writer.write(pluginXmlDocument);
         writer.close();
