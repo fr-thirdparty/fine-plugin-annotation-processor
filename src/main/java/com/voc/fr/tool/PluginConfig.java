@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan(value = {"com.voc.fr.tool"})
-public class Config {
+public class PluginConfig {
 
     public static final String[] FINE_FUNCTION_RECORDER = {
             EnableMetrics.class.getCanonicalName(),

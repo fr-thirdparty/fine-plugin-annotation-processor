@@ -3,14 +3,13 @@ package com.voc.fr.tool;
 import com.google.auto.service.AutoService;
 import com.voc.fr.tool.annotation.EnableFinePlugin;
 import com.voc.fr.tool.api.FineVersion;
-import com.voc.fr.tool.api.IAnnotationProcessor;
 import com.voc.fr.tool.api.IPluginXmlContext;
+import com.voc.fr.tool.core.FinePluginApplicationContext;
 import com.voc.fr.tool.utils.FineVersionHelp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -20,7 +19,6 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static com.voc.fr.tool.CompilerOptions.*;
@@ -33,7 +31,6 @@ import static com.voc.fr.tool.CompilerOptions.*;
 @Slf4j
 @AutoService(Processor.class)
 @SupportedOptions({ENV_VERSION_OPTION, PLUGIN_VERSION_OPTION, PLUGIN_XML_DIR_OPTION})
-@Component
 public class DefaultPluginXmlProcessor extends AbstractProcessor {
 
     private ClassLoader originClassLoader;
@@ -43,7 +40,7 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> supportedAnnotationTypes = new LinkedHashSet<>(Arrays.asList(Config.FINE_FUNCTION_RECORDER));
+        Set<String> supportedAnnotationTypes = new LinkedHashSet<>(Arrays.asList(PluginConfig.FINE_FUNCTION_RECORDER));
         this.reflections.getSubTypesOf(Annotation.class).stream().filter(
                 aClass -> {
                     EnableFinePlugin finePlugin = aClass.getAnnotation(EnableFinePlugin.class);
@@ -67,18 +64,17 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnv) {
         this.initClassLoader();
         super.init(processingEnv);
-        this.initApp(processingEnv);
+        this.initPluginXmlContext(processingEnv);
     }
 
-    private void initApp(ProcessingEnvironment processingEnv) {
+    private void initPluginXmlContext(ProcessingEnvironment processingEnv) {
         this.options = new CompilerOptions(processingEnv);
-        if (!options.check()) {
+        if (!this.options.isValid()) {
             return;
         }
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
-        applicationContext.getBeanFactory().registerSingleton("processingEnv", processingEnv);
+
+        AnnotationConfigApplicationContext applicationContext = new FinePluginApplicationContext(processingEnv, PluginConfig.class);
         this.pluginXmlContext = applicationContext.getBean(IPluginXmlContext.class);
-        Map<String, IAnnotationProcessor> processorMap = applicationContext.getBeansOfType(IAnnotationProcessor.class);
 
         if (StringUtils.isNotEmpty(options.getEnvVersion())) {
             this.pluginXmlContext.setFineVersion(FineVersionHelp.fromVersion(options.getEnvVersion()));
@@ -96,8 +92,6 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
         /* 遍历 annotations 获取 annotation 进行处理 */
         for (TypeElement typeElement : annotations) {
             this.pluginXmlContext.getProcessors().forEach(processor -> {
-                processor.setPluginXmlContext(this.pluginXmlContext);
-                processor.setProcessingEnv(this.processingEnv);
                 processor.process(typeElement, roundEnv);
             });
         }

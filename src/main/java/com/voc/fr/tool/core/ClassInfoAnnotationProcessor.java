@@ -24,14 +24,16 @@ import java.util.stream.Collectors;
  */
 public class ClassInfoAnnotationProcessor extends AbstractAnnotationProcessor {
     private final Class<? extends Annotation> annotation;
+    private int priority;
 
     @Override
     public Class<? extends Annotation> getAnnotationClass() {
         return this.annotation;
     }
 
-    public ClassInfoAnnotationProcessor(Class<? extends Annotation> annotation) {
+    public ClassInfoAnnotationProcessor(Class<? extends Annotation> annotation, int priority) {
         this.annotation = annotation;
+        this.priority = priority;
     }
 
     @Override
@@ -40,7 +42,6 @@ public class ClassInfoAnnotationProcessor extends AbstractAnnotationProcessor {
             this.process4Class(pluginXmlContext, element, typeElement);
         }
     }
-
 
     protected void process4Class(IPluginXmlContext pluginXmlContext, Element element, TypeElement typeElement) {
         Map<String, Object> values = AnnotationUtils.getValues(element, getAnnotationClass());
@@ -81,5 +82,8 @@ public class ClassInfoAnnotationProcessor extends AbstractAnnotationProcessor {
                 .collect(Collectors.toList());
     }
 
-    ;
+    @Override
+    public int getOrder() {
+        return this.priority;
+    }
 }

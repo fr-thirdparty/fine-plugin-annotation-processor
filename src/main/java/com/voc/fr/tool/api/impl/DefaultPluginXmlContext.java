@@ -5,7 +5,6 @@ import com.voc.fr.tool.utils.PluginXmlHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.processing.Filer;
 import java.io.File;
@@ -18,7 +17,6 @@ import java.util.*;
  * @time 2019/08/30 18:24
  */
 @Getter
-@Component
 public class DefaultPluginXmlContext implements IPluginXmlContext {
 
     @Setter

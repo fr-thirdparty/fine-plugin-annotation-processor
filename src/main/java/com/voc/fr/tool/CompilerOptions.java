@@ -44,32 +44,32 @@ public class CompilerOptions {
 
     public CompilerOptions(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
+        this.check();
     }
 
-    public boolean check() {
+    private void check() {
         this.envVersion = processingEnv.getOptions().get(ENV_VERSION_OPTION);
         this.pluginVersion = processingEnv.getOptions().get(PLUGIN_VERSION_OPTION);
         this.pluginXmlDir = processingEnv.getOptions().get(PLUGIN_XML_DIR_OPTION);
         if (StringUtils.isEmpty(envVersion)) {
             String message = MessageFormat.format("请确认插件使用环境参数是否正确 compilerArgs -A{0}=[value]", ENV_VERSION_OPTION);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-            return false;
+            return;
         }
         if (StringUtils.isEmpty(pluginVersion)) {
             String message = MessageFormat.format("请确认插件版本参数设置是否正确 compilerArgs -A{0}=[value]", PLUGIN_VERSION_OPTION);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-            return false;
+            return;
         }
         if (StringUtils.isEmpty(pluginXmlDir)) {
             String message = MessageFormat.format("请确认插件版本参数设置是否正确 compilerArgs -A{0}=[value]", PLUGIN_XML_DIR_OPTION);
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-            return false;
+            return;
         }
         if (log.isInfoEnabled()) {
             log.info(this.toString());
         }
         this.valid = true;
-        return true;
     }
 
 

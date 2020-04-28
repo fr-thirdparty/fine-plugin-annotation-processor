@@ -1,6 +1,7 @@
 package com.voc.fr.tool.core;
 
 import com.voc.fr.tool.annotation.EnableFinePlugin;
+import com.voc.fr.tool.api.IAction;
 import com.voc.fr.tool.api.IAnnotationProcessor;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +19,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.voc.fr.tool.api.impl.AbstractAnnotationProcessor.PLUGIN_XML_CONTEXT_PROPERTY;
+import static com.voc.fr.tool.api.impl.AbstractAnnotationProcessor.PROCESSING_ENV_PROPERTY;
 
 /**
  * @author Wu Yujie
@@ -32,36 +37,28 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ProcessorBeanDefinitionRegistry implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
-    public static final String PLUGIN_XML_CONTEXT_PROPERTY = "pluginXmlContext";
+
     private ApplicationContext applicationContext;
-    private final Set<Class<? extends Annotation>> autoProcessors;
+    private final List<ProcessorInfo> processorInfos;
 
     public ProcessorBeanDefinitionRegistry() {
         Reflections reflections = new Reflections("com.voc.fr.tool.annotation");
-        this.autoProcessors = reflections.getSubTypesOf(Annotation.class).stream().filter(
+        this.processorInfos = reflections.getSubTypesOf(Annotation.class).stream().filter(
                 aClass -> {
                     EnableFinePlugin finePlugin = aClass.getAnnotation(EnableFinePlugin.class);
                     return finePlugin != null && finePlugin.value() && finePlugin.auto();
                 }
-        ).collect(Collectors.toSet());
+        ).map(aClass -> new ProcessorInfo(aClass, aClass.getAnnotation(EnableFinePlugin.class).priority()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void postProcessBeanDefinitionRegistry(@NotNull BeanDefinitionRegistry registry) throws BeansException {
-        /* 1. 自动注入的处理器 */
-        for (Class<? extends Annotation> annotation : this.autoProcessors) {
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ClassInfoAnnotationProcessor.class);
-            GenericBeanDefinition beanDefinition = (GenericBeanDefinition) builder.getRawBeanDefinition();
-            beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0, annotation);
-            beanDefinition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
-            MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
-            propertyValues.addPropertyValue(PLUGIN_XML_CONTEXT_PROPERTY, this.getPluginXmlContext());
-            /* 注册 bean 定义 */
-            registry.registerBeanDefinition(annotation.getSimpleName() + "Processor", beanDefinition);
-        }
-        /* 2. 手动注入 */
-        BeanDefinition beanDefinition = registry.getBeanDefinition("changeNoteProcessor");
-        System.out.println(beanDefinition);
+        /* 1. 手动注入的处理器,即通过注解注入的实例 */
+        this.manualInjection(registry);
+
+        /* 2. 自动注入的处理器 */
+        this.autoInjection(registry);
     }
 
     @Override
@@ -70,19 +67,7 @@ public class ProcessorBeanDefinitionRegistry implements BeanDefinitionRegistryPo
         Map<String, IAnnotationProcessor> processorMap = this.applicationContext.getBeansOfType(IAnnotationProcessor.class);
         List<IAnnotationProcessor> processors = new ArrayList<>(processorMap.values());
         OrderComparator.sort(processors);
-        Set<String> definitions = processorMap.keySet();
-        definitions.forEach(definitionName -> {
-            GenericBeanDefinition definition = (GenericBeanDefinition) beanFactory.getBeanDefinition(definitionName);
-//            MutablePropertyValues propertyValues = definition.getPropertyValues();
-//            if (propertyValues.getPropertyValue(PLUGIN_XML_CONTEXT_PROPERTY) == null) {
-//                propertyValues.addPropertyValue(PLUGIN_XML_CONTEXT_PROPERTY, pluginXmlContext);
-//            }
-
-//            propertyValues.addPropertyValue("processingEnv", null);
-            definition.setScope(BeanDefinition.SCOPE_SINGLETON);
-        });
         processors.forEach(pluginXmlContext::addProcessor);
-
     }
 
     @Override
@@ -90,7 +75,66 @@ public class ProcessorBeanDefinitionRegistry implements BeanDefinitionRegistryPo
         this.applicationContext = applicationContext;
     }
 
+    @NotNull
     private IPluginXmlContext getPluginXmlContext() {
         return this.applicationContext.getBean(IPluginXmlContext.class);
     }
+
+    @NotNull
+    private ProcessingEnvironment getProcessingEnv() {
+        return this.applicationContext.getBean(ProcessingEnvironment.class);
+    }
+
+    @SafeVarargs
+    private final void processorBeanDefinitionConfig(@NotNull GenericBeanDefinition beanDefinition, IAction<GenericBeanDefinition>... action) {
+        beanDefinition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
+
+        beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
+        beanDefinition.setDependsOn(PROCESSING_ENV_PROPERTY, PLUGIN_XML_CONTEXT_PROPERTY);
+
+        MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
+        propertyValues.addPropertyValue(PLUGIN_XML_CONTEXT_PROPERTY, this.getPluginXmlContext());
+        propertyValues.addPropertyValue(PROCESSING_ENV_PROPERTY, this.getProcessingEnv());
+        Arrays.asList(action).forEach(
+                a -> a.execute(beanDefinition)
+        );
+    }
+
+    private void manualInjection(@NotNull BeanDefinitionRegistry registry) {
+        String[] beanDefinitionNames = registry.getBeanDefinitionNames();
+
+        for (String beanDefinitionName : beanDefinitionNames) {
+            BeanDefinition beanDefinition = registry.getBeanDefinition(beanDefinitionName);
+            if (beanDefinition instanceof GenericBeanDefinition) {
+                String beanClassName = beanDefinition.getBeanClassName();
+                try {
+                    Class<?> aClass = Class.forName(beanClassName);
+                    if (IAnnotationProcessor.class.isAssignableFrom(aClass)) {
+                        this.processorBeanDefinitionConfig((GenericBeanDefinition) beanDefinition);
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+
+    }
+
+    private void autoInjection(@NotNull BeanDefinitionRegistry registry) {
+        for (ProcessorInfo processorInfo : this.processorInfos) {
+            String beanName = processorInfo.getAnnotation().getSimpleName() + "Processor";
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ClassInfoAnnotationProcessor.class);
+            GenericBeanDefinition beanDefinition = (GenericBeanDefinition) builder.getRawBeanDefinition();
+            this.processorBeanDefinitionConfig(beanDefinition, genericBeanDefinition -> {
+                        genericBeanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0, processorInfo.getAnnotation());
+                        genericBeanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1, processorInfo.getPriority());
+                    }
+            );
+
+            registry.registerBeanDefinition(beanName, beanDefinition);
+        }
+    }
+
 }

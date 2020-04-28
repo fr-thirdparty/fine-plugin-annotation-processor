@@ -18,10 +18,12 @@ import java.lang.annotation.Annotation;
  * @time 2019/08/31 20:18
  */
 public abstract class AbstractAnnotationProcessor implements IAnnotationProcessor {
-
-    protected IPluginXmlContext pluginXmlContext;
+    public static final String PROCESSING_ENV_PROPERTY = "processingEnv";
+    public static final String PLUGIN_XML_CONTEXT_PROPERTY = "pluginXmlContext";
 
     protected ProcessingEnvironment processingEnv;
+
+    protected IPluginXmlContext pluginXmlContext;
 
     /**
      * 注解处理器日志记录器
@@ -29,13 +31,21 @@ public abstract class AbstractAnnotationProcessor implements IAnnotationProcesso
     public final static Logger logger = LoggerFactory.getLogger("PluginXmlProcessor");
 
     @Override
-    public void setPluginXmlContext(IPluginXmlContext pluginXmlContext) {
-        this.pluginXmlContext = pluginXmlContext;
+    public ProcessingEnvironment getProcessingEnv() {
+        return this.processingEnv;
+    }
+
+    public void setProcessingEnv(ProcessingEnvironment processingEnv) {
+        this.processingEnv = processingEnv;
     }
 
     @Override
-    public void setProcessingEnv(ProcessingEnvironment processingEnv) {
-        this.processingEnv = processingEnv;
+    public IPluginXmlContext getPluginXmlContext() {
+        return this.pluginXmlContext;
+    }
+
+    public void setPluginXmlContext(IPluginXmlContext pluginXmlContext) {
+        this.pluginXmlContext = pluginXmlContext;
     }
 
     @Override
@@ -63,7 +73,7 @@ public abstract class AbstractAnnotationProcessor implements IAnnotationProcesso
                 logger.debug("Annotation：{}", annotation.getQualifiedName());
             }
             for (Element element : env.getElementsAnnotatedWith(annotation)) {
-                this.process4PluginXmlContext(pluginXmlContext, element, annotation);
+                this.process4PluginXmlContext(this.pluginXmlContext, element, annotation);
             }
         }
     }

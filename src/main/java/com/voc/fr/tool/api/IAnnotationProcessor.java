@@ -14,18 +14,18 @@ import javax.lang.model.element.TypeElement;
 public interface IAnnotationProcessor extends Ordered {
 
     /**
-     * 插件描述文件上下文
+     * 获取处理环境
      *
-     * @param pluginXmlContext IPluginXmlContext
+     * @return ProcessingEnvironment
      */
-    void setPluginXmlContext(IPluginXmlContext pluginXmlContext);
+    ProcessingEnvironment getProcessingEnv();
 
     /**
-     * 处理环境
+     * 获取插件上下文
      *
-     * @param processingEnv ProcessingEnvironment
+     * @return IPluginXmlContext
      */
-    void setProcessingEnv(ProcessingEnvironment processingEnv);
+    IPluginXmlContext getPluginXmlContext();
 
     /**
      * 接口所属模块
