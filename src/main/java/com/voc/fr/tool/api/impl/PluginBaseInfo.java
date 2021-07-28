@@ -1,11 +1,13 @@
 package com.voc.fr.tool.api.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.voc.fr.tool.annotation.plugin.PluginInfo;
 import com.voc.fr.tool.api.INote;
 import com.voc.fr.tool.api.IPluginBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +60,7 @@ public class PluginBaseInfo implements IPluginBaseInfo {
     /**
      * 插件针对的报表版本，一般来说，需要保持向后兼容
      */
-    private String envVersion = "10.0";
+    private String envVersion;
 
     /**
      * 插件适配的移动端版本
@@ -93,11 +95,36 @@ public class PluginBaseInfo implements IPluginBaseInfo {
         this.changeNotes.add(note);
     }
 
+    /**
+     * @see PluginInfo#version()
+     * @see PluginInfo#envVersion()
+     */
     @Override
     public IPluginBaseInfo from(Map<String, Object> annotationValue) {
         byte[] bytes = JSON.toJSONBytes(annotationValue);
         PluginBaseInfo info = JSON.parseObject(bytes, PluginBaseInfo.class);
+        String oldVersion = this.getVersion();
+        String version = info.getVersion();
+
+        String oldEnvVersion = this.getEnvVersion();
+        String envVersion = info.getEnvVersion();
+
         BeanUtils.copyProperties(info, this, "changeNotes");
+
+        if (StringUtils.hasText(oldVersion) && StringUtils.isEmpty(version)) {
+            this.setVersion(oldVersion);
+        } else {
+            this.setVersion("1.0.0");
+        }
+
+        if (StringUtils.hasText(envVersion)) {
+            this.setEnvVersion(envVersion);
+        } else if (StringUtils.hasText(oldEnvVersion)) {
+            this.setEnvVersion(oldEnvVersion);
+        } else {
+            this.setEnvVersion("8.0");
+        }
+
         return this;
     }
 

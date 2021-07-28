@@ -53,14 +53,14 @@ public @interface PluginInfo {
     int price() default 0;
 
     /**
-     * 插件版本（此项值为空则从编译参数中获取，否则使用此值）
+     * 插件版本（此项值为空则从编译参数中获取，否则使用1.0.0）
      */
-    String version() default "1.0.0";
+    String version() default "";
 
     /**
-     * 插件对应报表版本
+     * 插件对应报表版本（默认使用编译参数接收到的版本，若此项有值则使用此值）
      */
-    String envVersion() default "10.0";
+    String envVersion() default "";
 
     /**
      * 插件适配的移动端版本

@@ -2,7 +2,6 @@ package com.voc.fr.tool;
 
 import com.google.auto.service.AutoService;
 import com.voc.fr.tool.annotation.EnableFinePlugin;
-import com.voc.fr.tool.api.FineVersion;
 import com.voc.fr.tool.api.IPluginXmlContext;
 import com.voc.fr.tool.core.FinePluginApplicationContext;
 import com.voc.fr.tool.utils.FineVersionHelp;
@@ -77,10 +76,15 @@ public class DefaultPluginXmlProcessor extends AbstractProcessor {
         this.pluginXmlContext = applicationContext.getBean(IPluginXmlContext.class);
 
         if (StringUtils.isNotEmpty(options.getEnvVersion())) {
-            this.pluginXmlContext.setFineVersion(FineVersionHelp.fromVersion(options.getEnvVersion()));
-        } else {
-            this.pluginXmlContext.setFineVersion(FineVersion.V10);
+            this.pluginXmlContext.getPluginBaseInfo().setEnvVersion(options.getEnvVersion());
+            this.pluginXmlContext.setFineVersion(FineVersionHelp.fromEnvVersion(options.getEnvVersion()));
         }
+
+        if (StringUtils.isNotEmpty(options.getPluginVersion())) {
+            this.pluginXmlContext.getPluginBaseInfo().setVersion(options.getPluginVersion());
+        }
+
+
     }
 
     @Override

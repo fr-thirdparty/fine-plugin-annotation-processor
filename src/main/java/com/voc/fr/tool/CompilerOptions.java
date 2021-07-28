@@ -21,7 +21,7 @@ import java.text.MessageFormat;
 public class CompilerOptions {
     public static final String ENV_VERSION_OPTION = "fine.env.version";
     public static final String PLUGIN_VERSION_OPTION = "fine.plugin.version";
-    public static final String PLUGIN_XML_DIR_OPTION = "fine.plugin.xml.dir";
+    public static final String PLUGIN_XML_DIR_OPTION = "fine.plugin.xmlDir";
 
     private ProcessingEnvironment processingEnv;
 

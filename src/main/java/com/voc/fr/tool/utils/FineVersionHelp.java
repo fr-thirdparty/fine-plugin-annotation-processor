@@ -15,6 +15,7 @@ public class FineVersionHelp {
 
     public static FineVersion fromEnvVersion(String envVersion) {
         String v = envVersion.trim();
+        // TODO: 2021/7/28 14:49 获取最新版本
         if (v.matches(V8)) {
             return FineVersion.V8;
         } else if (v.matches(V9)) {
